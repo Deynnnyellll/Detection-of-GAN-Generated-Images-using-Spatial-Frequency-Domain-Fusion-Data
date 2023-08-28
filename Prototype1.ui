@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>900</width>
+    <height>582</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">#Form {
+	
+	background-image: url(:/resources/Get Started.jpg);
+}</string>
+  </property>
+ </widget>
+ <resources>
+  <include location="../../../Downloads/Detection of GAN-Generated Images/resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>
