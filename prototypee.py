@@ -5,7 +5,6 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1000, 646)
-        MainWindow.setStyleSheet("#centralwidget {\n""background-image: url(resources/Get Started.jpg);\n""}")
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         MainWindow.setCentralWidget(self.centralwidget)
@@ -27,12 +26,7 @@ class Ui_MainWindow(object):
         self.aboutBar.setText(_translate("MainWindow", "About"))
 
     def setWelcomePage(self):
-        self.icon = QtWidgets.QLabel(parent=self.centralwidget)
-        self.icon.setGeometry(QtCore.QRect(370, 340, 261, 261))
-        self.icon.setText("")
-        self.icon.setPixmap(QtGui.QPixmap("resources/Icon.png"))
-        self.icon.setScaledContents(True)
-        self.icon.setObjectName("icon")
+        MainWindow.setStyleSheet("#centralwidget {\n""background-image: url(resources/Get Started.jpg);\n""}")
         self.getStarted = QtWidgets.QPushButton(parent=self.centralwidget)
         self.getStarted.setGeometry(QtCore.QRect(440, 190, 121, 51))
         self.getStarted.setStyleSheet("* {\n""background: transparent;\n""}")
@@ -42,6 +36,12 @@ class Ui_MainWindow(object):
         self.getStarted.setIcon(icon)
         self.getStarted.setIconSize(QtCore.QSize(110, 110))
         self.getStarted.setObjectName("getStarted")
+        self.icon = QtWidgets.QLabel(parent=self.centralwidget)
+        self.icon.setGeometry(QtCore.QRect(370, 340, 261, 261))
+        self.icon.setText("")
+        self.icon.setPixmap(QtGui.QPixmap("resources/Icon.png"))
+        self.icon.setScaledContents(True)
+        self.icon.setObjectName("icon")
         self.gallery1 = QtWidgets.QLabel(parent=self.centralwidget)
         self.gallery1.setGeometry(QtCore.QRect(660, 510, 171, 121))
         self.gallery1.setText("")
@@ -109,6 +109,28 @@ class Ui_MainWindow(object):
         self.aboutBar.setGeometry(QtCore.QRect(690, 30, 51, 24))
         self.aboutBar.setStyleSheet("* {\n""background: transparent;\n""color: rgb(255, 255, 255)\n""}")
         self.aboutBar.setObjectName("aboutBar")
+
+        self.icon.show()
+        self.getStarted.show()
+        self.title.show()
+        self.gallery1.show()
+        self.gallery2.show()
+        self.eye1.show()
+        self.eye2.show()
+        self.aboutBar.clicked.connect(self.setAboutPage)
+
+    def setAboutPage(self):
+        self.icon.hide()
+        self.getStarted.hide()
+        self.title.hide()
+        self.gallery1.hide()
+        self.gallery2.hide()
+        self.eye1.hide()
+        self.eye2.hide()
+        MainWindow.setStyleSheet("#centralwidget {\n""background-image: url(resources/About Page.png);\n""}")
+        self.homeBar.clicked.connect(self.setWelcomePage)
+
+
 
             
 
