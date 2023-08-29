@@ -90,7 +90,6 @@ class Ui_MainWindow(object):
         self.aboutBar.setGeometry(QtCore.QRect(690, 30, 51, 24))
         self.aboutBar.setStyleSheet("* {\n""background: transparent;\n""color: rgb(255, 255, 255)\n""}")
         self.aboutBar.setObjectName("aboutBar")
-
         self.imageLabel = QtWidgets.QLabel(parent=self.centralwidget)
         self.imageLabel.setGeometry(QtCore.QRect(70, 90, 51, 41))
         font = QtGui.QFont()
@@ -186,7 +185,10 @@ class Ui_MainWindow(object):
         font.setPointSize(9)
         self.uploadLabel.setFont(font)
         self.uploadLabel.setStyleSheet("* {\n""    background: transparent;\n""    color: rgb(255, 255, 255)\n""}")
-        self.setWelcomePage() 
+        self.setWelcomePage() #baka madoble yung function call dito pagkapaste mo pacheck na lang
+
+        #Lagay mo code mo dito (yung dinagdag lang ah)
+
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -224,7 +226,7 @@ class Ui_MainWindow(object):
         self.uploadLabel.hide()
         self.aboutBar_2.hide()
         self.getStarted.clicked.connect(self.setHomePage)
-        self.aboutBar.clicked.connect(self.setAboutPage)
+        self.aboutBar.clicked.connect(self.setAboutPage
 
     def setAboutPage(self):
         self.icon.hide()
@@ -246,6 +248,9 @@ class Ui_MainWindow(object):
         self.eye3.hide()
         MainWindow.setStyleSheet("#centralwidget {\n""background-image: url(resources/About Page.png);\n""}")
         self.homeBar.clicked.connect(self.setWelcomePage)
+        MainWindow.setStyleSheet("#centralwidget {\n""background-image: url(resources/About Page.png);\n""}")
+        self.homeBar.clicked.connect(self.setWelcomePage)
+
 
     def setHomePage(self):
         self.icon.hide()
