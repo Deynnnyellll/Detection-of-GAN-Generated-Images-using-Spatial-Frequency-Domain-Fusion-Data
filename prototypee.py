@@ -8,25 +8,6 @@ class Ui_MainWindow(object):
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         MainWindow.setCentralWidget(self.centralwidget)
-
-        self.setWelcomePage()
-
-
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
-    def retranslateUi(self, MainWindow):
-        _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.logoName.setText(_translate("MainWindow", "Logo/App Name"))
-        self.homeBar.setText(_translate("MainWindow", "Home"))
-        self.datasetBar.setText(_translate("MainWindow", "Dataset"))
-        self.modelBar.setText(_translate("MainWindow", "Model"))
-        self.docuBar.setText(_translate("MainWindow", "Documentation"))
-        self.aboutBar.setText(_translate("MainWindow", "About"))
-
-    def setWelcomePage(self):
-        MainWindow.setStyleSheet("#centralwidget {\n""background-image: url(resources/Get Started.jpg);\n""}")
         self.getStarted = QtWidgets.QPushButton(parent=self.centralwidget)
         self.getStarted.setGeometry(QtCore.QRect(440, 190, 121, 51))
         self.getStarted.setStyleSheet("* {\n""background: transparent;\n""}")
@@ -110,6 +91,26 @@ class Ui_MainWindow(object):
         self.aboutBar.setStyleSheet("* {\n""background: transparent;\n""color: rgb(255, 255, 255)\n""}")
         self.aboutBar.setObjectName("aboutBar")
 
+        ###################################################Lagay mo code mo ###########################################################
+
+        self.setWelcomePage()
+
+
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.logoName.setText(_translate("MainWindow", "Logo/App Name"))
+        self.homeBar.setText(_translate("MainWindow", "Home"))
+        self.datasetBar.setText(_translate("MainWindow", "Dataset"))
+        self.modelBar.setText(_translate("MainWindow", "Model"))
+        self.docuBar.setText(_translate("MainWindow", "Documentation"))
+        self.aboutBar.setText(_translate("MainWindow", "About"))
+
+    def setWelcomePage(self):
+        MainWindow.setStyleSheet("#centralwidget {\n""background-image: url(resources/Get Started.jpg);\n""}")
         self.icon.show()
         self.getStarted.show()
         self.title.show()
