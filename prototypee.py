@@ -245,6 +245,8 @@ class Ui_MainWindow(object):
         self.Wrapper.hide()
         self.uploadButton.hide()
         self.eye3.hide()
+        self.aboutBar_2.hide()
+        self.uploadLabel.hide()
         MainWindow.setStyleSheet("#centralwidget {\n""background-image: url(resources/About Page.png);\n""}")
         self.homeBar.clicked.connect(self.setWelcomePage)
 
