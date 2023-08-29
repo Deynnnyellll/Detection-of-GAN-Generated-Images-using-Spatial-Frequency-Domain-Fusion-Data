@@ -91,9 +91,9 @@ class Ui_MainWindow(object):
         self.aboutBar.setStyleSheet("* {\n""background: transparent;\n""color: rgb(255, 255, 255)\n""}")
         self.aboutBar.setObjectName("aboutBar")
 
-        ###################################################Lagay mo code mo ###########################################################
+        self.setWelcomePage() #baka madoble yung function call dito pagkapaste mo pacheck na lang
 
-        self.setWelcomePage()
+        #Lagay mo code mo dito (yung dinagdag lang ah)
 
 
         self.retranslateUi(MainWindow)
@@ -130,6 +130,8 @@ class Ui_MainWindow(object):
         self.eye2.hide()
         MainWindow.setStyleSheet("#centralwidget {\n""background-image: url(resources/About Page.png);\n""}")
         self.homeBar.clicked.connect(self.setWelcomePage)
+
+    #add mo dito yung setHomePage    
 
 
 
