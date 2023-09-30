@@ -1,7 +1,16 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
+from PyQt6.QtWidgets import (QFileDialog, QMainWindow)
 import sys
+from pathlib import Path
 
-class Ui_MainWindow(object):
+class Ui_MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__() 
+
+        QMainWindow().__init__(self)
+        self.ui = MainWindow
+        self.setupUi(self)
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1000, 646)
@@ -270,11 +279,14 @@ class Ui_MainWindow(object):
         self.eye3.show()
         self.uploadLabel.show()
         self.aboutBar_2.show()
- 
+        self.uploadButton.clicked.connect(self.uploadImage)
 
+    def uploadImage(self):
+        home_dir = str(Path.home())
+        fname = QFileDialog.getOpenFileName(self, 'Open file', home_dir)
 
-
-            
+        
+      
 
 
 if __name__ == "__main__":
