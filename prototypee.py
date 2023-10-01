@@ -3,10 +3,16 @@ from PyQt6.QtWidgets import (QFileDialog, QMainWindow)
 from PyQt6.QtGui import QPixmap
 import sys
 from pathlib import Path
+from dwt_pywt import dwt
+import cv2
+import matplotlib.pyplot as plt
 
 class Ui_MainWindow(QMainWindow):
     def __init__(self):
         super().__init__() 
+
+        #Container for Real and Gan Images
+        self.images = []
 
         QMainWindow().__init__(self)
         self.ui = MainWindow
@@ -18,6 +24,8 @@ class Ui_MainWindow(QMainWindow):
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         MainWindow.setCentralWidget(self.centralwidget)
+
+        #Get Started Button
         self.getStarted = QtWidgets.QPushButton(parent=self.centralwidget)
         self.getStarted.setGeometry(QtCore.QRect(440, 190, 121, 51))
         self.getStarted.setStyleSheet("* {\n""background: transparent;\n""}")
@@ -27,6 +35,8 @@ class Ui_MainWindow(QMainWindow):
         self.getStarted.setIcon(icon)
         self.getStarted.setIconSize(QtCore.QSize(110, 110))
         self.getStarted.setObjectName("getStarted")
+
+        #Welcome Page Icons & Labels
         self.icon = QtWidgets.QLabel(parent=self.centralwidget)
         self.icon.setGeometry(QtCore.QRect(370, 340, 261, 261))
         self.icon.setText("")
@@ -80,6 +90,8 @@ class Ui_MainWindow(QMainWindow):
         self.socmedIcons.setPixmap(QtGui.QPixmap("resources/Group 2.png"))
         self.socmedIcons.setScaledContents(True)
         self.socmedIcons.setObjectName("socmedIcons")
+
+        #Navbar
         self.homeBar = QtWidgets.QPushButton(parent=self.centralwidget)
         self.homeBar.setGeometry(QtCore.QRect(240, 30, 75, 24))
         self.homeBar.setStyleSheet("* {\n""background: transparent;\n""color: rgb(85, 255, 255)\n""}")
@@ -281,25 +293,34 @@ class Ui_MainWindow(QMainWindow):
         self.uploadLabel.show()
         self.aboutBar_2.show()
         self.uploadButton.clicked.connect(self.uploadImage)
+        self.homeBar.clicked.connect(self.feature_extraction)
 
     def uploadImage(self):
-        self.images = []
-
         home_dir = str(Path.home())
         fname, _ = QFileDialog.getOpenFileName(self, 'Open file', home_dir)
 
-        while True:
-            if fname:
-                # Load the image into a QPixmap
-                pixmap = QPixmap(fname)
+        if fname:
+            pixmap = QPixmap(fname)
 
-                # Set the pixmap to the QLabel to display the imagelabel
-                self.Wrapper.setPixmap(pixmap)
+            self.Wrapper.setPixmap(pixmap)
 
-                print(fname)
+            print(fname)
 
-                self.images.append(fname)
+            self.images.append(fname)
+            print(len(self.images))
 
+    def feature_extraction(self):
+        image = cv2.imread(self.images[0])
+
+        frequency_features = dwt(image)
+
+        print(frequency_features)
+
+        plt.plot(frequency_features)
+        plt.xlabel('Subband')
+        plt.ylabel('Mean')
+        plt.title('Frequency Features')
+        plt.show()
         
       
 
