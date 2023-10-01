@@ -1,5 +1,6 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtWidgets import (QFileDialog, QMainWindow)
+from PyQt6.QtGui import QPixmap
 import sys
 from pathlib import Path
 
@@ -282,8 +283,22 @@ class Ui_MainWindow(QMainWindow):
         self.uploadButton.clicked.connect(self.uploadImage)
 
     def uploadImage(self):
+        self.images = []
+
         home_dir = str(Path.home())
-        fname = QFileDialog.getOpenFileName(self, 'Open file', home_dir)
+        fname, _ = QFileDialog.getOpenFileName(self, 'Open file', home_dir)
+
+        while True:
+            if fname:
+                # Load the image into a QPixmap
+                pixmap = QPixmap(fname)
+
+                # Set the pixmap to the QLabel to display the imagelabel
+                self.Wrapper.setPixmap(pixmap)
+
+                print(fname)
+
+                self.images.append(fname)
 
         
       
