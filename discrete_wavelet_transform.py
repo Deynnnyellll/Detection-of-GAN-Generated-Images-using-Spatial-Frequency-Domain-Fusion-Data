@@ -1,3 +1,8 @@
+''' 
+This code is for applying Discrete Wavelet Transform
+as one of the feature extraction techniques
+'''
+
 import numpy as np
 import cv2
 from preprocessing import preprocessing
@@ -42,15 +47,18 @@ def dwt_2d(image):
   height, width = transformed_image.shape
   hh_subband = transformed_image[:height // 2, width // 2:]
 
+  #for data visualization only
+  print('\nDWT Features:\n', hh_subband)
+
+  cv2.imshow('DWT Transformed Image', hh_subband)
+  cv2.waitKey(0)
+  cv2.destroyAllWindows()
+
+
   return hh_subband
 
+
+#just for testing
 image = 'test.jpg'
 resized_image = preprocessing(image)
-
 transformed_image = dwt_2d(resized_image)
-
-print('DWT Features:\n',transformed_image)
-
-cv2.imshow('DWT Transformed Image', transformed_image)
-cv2.waitKey(0)
-cv2.destroyAllWindows()

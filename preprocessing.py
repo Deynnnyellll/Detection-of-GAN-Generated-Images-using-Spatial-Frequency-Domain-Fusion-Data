@@ -1,3 +1,12 @@
+'''
+This code is for preprocessing the image before
+going to feature extraction phase
+
+1. The image will be converted to grayscale
+2. The image will be resize to 256x256 (as mentioned to the system architecture
+   where images will be resize to a common size)
+'''
+
 import cv2
 import numpy as np
 import time
@@ -15,7 +24,7 @@ def preprocessing(image):
         time.sleep(1)
         print('...')
         time.sleep(1)
-        print("\nPerforming image resizing (256x256)\n\n")
+        print("\nPerforming image resizing (256x256)")
         print('...')
         time.sleep(1)
         final_image = cv2.resize(image, (256, 256))
