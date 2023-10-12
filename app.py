@@ -6,6 +6,7 @@ from pathlib import Path
 from dwt_pywt import dwt
 import cv2
 import matplotlib.pyplot as plt
+import numpy as np
 
 class Ui_MainWindow(QMainWindow):
     def __init__(self):
