@@ -5,3 +5,6 @@ Development Plan:
 
 System Architecture:
 <img src="system arc.JPG" alt="System Architecture">
+
+MODEL DEVELOPMENT - GANTT CHART:
+<img src="gantt.JPG" alt="System Architecture">
