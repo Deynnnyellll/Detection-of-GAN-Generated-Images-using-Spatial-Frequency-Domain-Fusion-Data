@@ -45,6 +45,3 @@ def preprocessing(image):
     cv2.destroyAllWindows()
 
     return noise_reduced_img
-
-    time.sleep(2)
-    return final_image
