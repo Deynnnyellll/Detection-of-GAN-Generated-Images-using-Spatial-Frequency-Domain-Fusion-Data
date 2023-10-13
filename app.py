@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import (QFileDialog, QMainWindow)
 from PyQt6.QtGui import QPixmap
 import sys
 from pathlib import Path
-from dwt_pywt import dwt
+from discrete_wavelet_transform import dwt_2d
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
@@ -311,17 +311,9 @@ class Ui_MainWindow(QMainWindow):
             print(len(self.images))
 
     def feature_extraction(self):
-        image = cv2.imread(self.images[0])
+        image = self.images[0]
 
-        frequency_features = dwt(image)
-
-        print(frequency_features)
-
-        plt.plot(frequency_features)
-        plt.xlabel('Subband')
-        plt.ylabel('Mean')
-        plt.title('Frequency Features')
-        plt.show()
+        frequency_features = dwt_2d(image)
         
       
 

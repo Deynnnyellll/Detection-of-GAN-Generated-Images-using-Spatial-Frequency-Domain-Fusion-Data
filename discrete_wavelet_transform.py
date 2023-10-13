@@ -22,6 +22,7 @@ def haar_transform(matrix):
 
 #applying 2D dwt
 def dwt_2d(image):
+  image = preprocessing(image)
   original_height, original_width = image.shape
   height = 2**int(np.ceil(np.log2(original_height)))
   width = 2**int(np.ceil(np.log2(original_width)))
@@ -43,7 +44,7 @@ def dwt_2d(image):
     height //= 2
     width //= 2
 
-  #getting high frequency subban (hh)
+  #getting high frequency subband (hh)
   height, width = transformed_image.shape
   hh_subband = transformed_image[:height // 2, width // 2:]
 
@@ -56,9 +57,3 @@ def dwt_2d(image):
 
 
   return hh_subband
-
-
-#just for testing
-image = 'test.jpg'
-resized_image = preprocessing(image)
-transformed_image = dwt_2d(resized_image)
