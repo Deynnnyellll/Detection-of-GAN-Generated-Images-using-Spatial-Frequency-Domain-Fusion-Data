@@ -2,3 +2,6 @@
 Development Plan:
 
 <img src="Development Plan.png" alt="Development Plan">
+
+System Architecture:
+<img src="system arc.JPG" alt="System Architecture">
