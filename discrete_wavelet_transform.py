@@ -49,11 +49,11 @@ def dwt_2d(image):
   hh_subband = cv2.resize(hh_subband, dsize=(512, 512))
 
   #for data visualization only
-  # print('\nDWT Features:\n', hh_subband)
+  print('\nDWT Features:\n', hh_subband)
 
-  # cv2.imshow('DWT Transformed Image', hh_subband)
-  # cv2.waitKey(0)
-  # cv2.destroyAllWindows()
+  cv2.imshow('DWT Transformed Image', hh_subband)
+  cv2.waitKey(0)
+  cv2.destroyAllWindows()
 
 
   return hh_subband

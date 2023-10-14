@@ -7,6 +7,7 @@ from discrete_wavelet_transform import dwt_2d
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+from preprocessing import preprocessing
 
 class Ui_MainWindow(QMainWindow):
     def __init__(self):
@@ -312,8 +313,9 @@ class Ui_MainWindow(QMainWindow):
 
     def feature_extraction(self):
         image = self.images[0]
+        preprocessed_img = preprocessing(image)
 
-        frequency_features = dwt_2d(image)
+        frequency_features = dwt_2d(preprocessed_img)
         
       
 

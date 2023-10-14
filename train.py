@@ -9,7 +9,7 @@ import scipy
 from libsvm.svmutil import svm_problem, svm_parameter, svm_train, svm_predict
 from preprocessing import preprocessing
 from discrete_wavelet_transform import dwt_2d
-from local_binary_pattern import lbp
+# from local_binary_pattern import lbp
 import time
 import cv2
 
@@ -25,9 +25,9 @@ print("High frequency components obtained")
 print(dwt_image)
 time.sleep(2)
 print("\n....\n")
-lbp_image = lbp(preprocessed_img)
-print(np.array(lbp_image[1]))
+# lbp_image = lbp(preprocessed_img)
+# print(np.array(lbp_image[1]))
 
-concatenated_feature = np.concatenate((dwt_image, lbp_image[1]), axis=1)
-print("\nConcatenated Feature\n")
-print(concatenated_feature)
+# concatenated_feature = np.concatenate((dwt_image, lbp_image[1]), axis=1)
+# print("\nConcatenated Feature\n")
+# print(concatenated_feature)
