@@ -14,6 +14,8 @@ import time
 import cv2
 
 
+#test code
+
 sample_img = "1.jpg"
 preprocessed_img = preprocessing(sample_img)
 
@@ -26,11 +28,6 @@ print("\n....\n")
 lbp_image = lbp(preprocessed_img)
 print(np.array(lbp_image[1]))
 
-# concatenated_feature = np.concatenate((dwt_image, lbp_image[1]), axis=1)
-# print("\nConcatenated Feature\n")
-# print(concatenated_feature)
-
-cv2.imshow("Fused Features",np.array(lbp_image[1]))
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-
+concatenated_feature = np.concatenate((dwt_image, lbp_image[1]), axis=1)
+print("\nConcatenated Feature\n")
+print(concatenated_feature)

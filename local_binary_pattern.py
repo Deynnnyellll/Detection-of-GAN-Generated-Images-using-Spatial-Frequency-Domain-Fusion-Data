@@ -39,7 +39,7 @@ def lbp(image):
     return lbp_feature_map, lbp_values
 
 # Load and preprocess the image as grayscale
-image_path = 'fish.png'
+image_path = '1.jpg'
 preprocessed_image = preprocessing(image_path)
 
 # Calculate LBP feature map and values
