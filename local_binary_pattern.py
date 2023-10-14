@@ -10,14 +10,14 @@ def get_pixel(image, x, y):
 def lbp_calculated_pixel(image, x, y):
     center = image[x][y]
     val_ar = []
-    val_ar.append(get_pixel(image, x - 1, y - 1))
-    val_ar.append(get_pixel(image, x - 1, y))
-    val_ar.append(get_pixel(image, x - 1, y + 1))
-    val_ar.append(get_pixel(image, x, y + 1))
-    val_ar.append(get_pixel(image, x + 1, y + 1))
-    val_ar.append(get_pixel(image, x + 1, y))
-    val_ar.append(get_pixel(image, x + 1, y - 1))
-    val_ar.append(get_pixel(image, x, y - 1))
+    val_ar.append(get_pixel(image, x - 1, y - 1) >= center)
+    val_ar.append(get_pixel(image, x - 1, y) >= center)
+    val_ar.append(get_pixel(image, x - 1, y + 1) >= center)
+    val_ar.append(get_pixel(image, x, y + 1) >= center)
+    val_ar.append(get_pixel(image, x + 1, y + 1) >= center)
+    val_ar.append(get_pixel(image, x + 1, y) >= center)
+    val_ar.append(get_pixel(image, x + 1, y - 1) >= center)
+    val_ar.append(get_pixel(image, x, y - 1) >= center)
 
     val = 0
     for i in range(len(val_ar)):
@@ -37,8 +37,8 @@ def lbp(image):
 
     return lbp_feature_map, lbp_values
 
-# Load and preprocess the image
-image_path = 'test.jpg'
+# Load and preprocess the image as grayscale
+image_path = 'fish.png'
 preprocessed_image = preprocessing(image_path)
 
 # Calculate LBP feature map and values
@@ -48,6 +48,11 @@ lbp_map, lbp_values = lbp(preprocessed_image)
 plt.imshow(np.array(lbp_map), cmap="gray")
 plt.title("LBP Feature Map")
 plt.show()
+
+# # Display the LBP values as grayscale
+# plt.imshow(np.array(lbp_values), cmap="gray")
+# plt.title("LBP Values")
+# plt.show()
 
 # Display the LBP values
 print("LBP Value:")
