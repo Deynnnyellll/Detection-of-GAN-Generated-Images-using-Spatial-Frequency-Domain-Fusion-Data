@@ -20,16 +20,16 @@ def preprocessing(image):
     # Check the dimensions
     dimension = np.array(image.shape)
     if dimension[0] == 256 and dimension[1] == 256:
-        print("\n... Image is already in 256x256\n\n")
+        print("\n\nImage is already in 256x256\n\n")
         final_image = image
     else:
-        print("\nWarning: Image is not resized to 256x256")
-        time.sleep(1)
+        print("\n\nWarning: Image is not resized to 256x256")
+        # time.sleep(0.5)
         print('...')
-        time.sleep(1)
+        # time.sleep(0.5)
         print("\nPerforming image resizing (256x256)")
         print('...')
-        time.sleep(1)
+        # time.sleep(0.5)
         final_image = cv2.resize(image, dsize=(512, 512))
 
     # Noise reduction using Gaussian Blurring
@@ -37,7 +37,7 @@ def preprocessing(image):
     noise_reduced_img = cv2.GaussianBlur(final_image, (3, 3), 0)
     
     # noise_reduced_img = cv2.medianBlur(final_image, 5)
-    time.sleep(2)
+    # time.sleep(0.5)
 
     # compare = np.concatenate((final_image, noise_reduced_img), axis=1)
     # cv2.imshow('final_image', compare)
@@ -45,3 +45,6 @@ def preprocessing(image):
     # cv2.destroyAllWindows()
 
     return noise_reduced_img
+
+
+image = "1.jpg"
