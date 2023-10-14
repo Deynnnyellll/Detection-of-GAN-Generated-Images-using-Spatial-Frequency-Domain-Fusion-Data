@@ -12,15 +12,3 @@ from discrete_wavelet_transform import dwt_2d
 # from local_binary_pattern import lbp
 import time
 import cv2
-
-
-#preprocessing
-
-
-#feature extraction
-
-
-#fusion
-
-
-#training
