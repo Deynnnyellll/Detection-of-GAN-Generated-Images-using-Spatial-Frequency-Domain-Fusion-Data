@@ -14,20 +14,13 @@ import time
 import cv2
 
 
-#test code
+#preprocessing
 
-sample_img = "1.jpg"
-preprocessed_img = preprocessing(sample_img)
 
-print("\nApplying 2D DWT")
-dwt_image = dwt_2d(preprocessed_img)
-print("High frequency components obtained")
-print(dwt_image)
-time.sleep(2)
-print("\n....\n")
-# lbp_image = lbp(preprocessed_img)
-# print(np.array(lbp_image[1]))
+#feature extraction
 
-# concatenated_feature = np.concatenate((dwt_image, lbp_image[1]), axis=1)
-# print("\nConcatenated Feature\n")
-# print(concatenated_feature)
+
+#fusion
+
+
+#training
