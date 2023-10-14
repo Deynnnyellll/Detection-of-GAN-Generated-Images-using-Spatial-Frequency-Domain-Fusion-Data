@@ -10,6 +10,7 @@ from libsvm.svmutil import svm_problem, svm_parameter, svm_train, svm_predict
 from preprocessing import preprocessing
 from discrete_wavelet_transform import dwt_2d
 from local_binary_pattern import lbp
+from feature_concatenation import feature_fusion
 import time
 import cv2
 import os
@@ -32,7 +33,7 @@ def train(directory):
 
         preprocessed_img.append(img)
 
-    print("Number of Images: ", len(preprocessed_img))    
+    print("Number of Images: ", len(preprocessed_img))  
 
     # feature extraction
     print("Performing Feature Extraction")
@@ -65,8 +66,24 @@ def train(directory):
     print('\nLBP application finished\n\n')
     time.sleep(1)
 
+    # applying feature fusion
+    fused_features = []
+
+    for i in dwt_img_features:
+        for j in lbp_img_features:
+            feature_vector = feature_fusion(i, j)
+
+            # store the fused features in fused_features list
+            fused_features.append(feature_vector)
+    
+    
+    # Print the fused features
+    for i in fused_features:
+        print('\n\n')
+        print(i)   
+
 
     # svm implementation
 
-directory = "/Users/Danniel/Downloads/FFHQ"
+directory = "/Users/Danniel/Downloads/images"
 train(directory) 
