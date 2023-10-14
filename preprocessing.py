@@ -30,18 +30,18 @@ def preprocessing(image):
         print("\nPerforming image resizing (256x256)")
         print('...')
         time.sleep(1)
-        final_image = cv2.resize(image, dsize=(1024, 1024))
+        final_image = cv2.resize(image, dsize=(512, 512))
 
     # Noise reduction using Gaussian Blurring
-    print("Applying Gaussian Noise Reduction")
-    noise_reduced_img = cv2.GaussianBlur(final_image, (5, 5), 0)
+    print("\nApplying Gaussian Noise Reduction")
+    noise_reduced_img = cv2.GaussianBlur(final_image, (3, 3), 0)
     
     # noise_reduced_img = cv2.medianBlur(final_image, 5)
     time.sleep(2)
 
-    compare = np.concatenate((final_image, noise_reduced_img), axis=1)
-    cv2.imshow('final_image', compare)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # compare = np.concatenate((final_image, noise_reduced_img), axis=1)
+    # cv2.imshow('final_image', compare)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
 
     return noise_reduced_img

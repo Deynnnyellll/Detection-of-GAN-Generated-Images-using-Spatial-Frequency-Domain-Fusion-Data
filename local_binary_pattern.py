@@ -34,6 +34,7 @@ def lbp(image):
             lbp_value = lbp_calculated_pixel(image, i, j)
             lbp_feature_map[i][j] = lbp_value
             lbp_values[i][j] = lbp_value
+        
 
     return lbp_feature_map, lbp_values
 
