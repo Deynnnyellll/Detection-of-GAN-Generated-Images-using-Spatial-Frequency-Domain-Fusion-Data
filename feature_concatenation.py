@@ -17,7 +17,7 @@ def concatenate_lbp_dwt(lbp_values, dwt_features):
   """
 
   # Flatten the LBP and DWT arrays.
-  lbp_values_flat = lbp_values.flatten()
+  lbp_values_flat = (lbp_values[1]).flatten()
   dwt_features_flat = dwt_features.flatten()
 
   # Concatenate the flattened arrays.
@@ -25,12 +25,14 @@ def concatenate_lbp_dwt(lbp_values, dwt_features):
 
   return fused_vector
 
-
 image = '1.jpg'
 image1 = preprocessing(image)
 dwt_features = dwt_2d(image1)
 lbp_values = lbp(image1)
 
-fused_vector = concatenate_lbp_dwt(lbp_values[1], dwt_features)
 
+fused_vector = concatenate_lbp_dwt(np.array(lbp_values[1]), np.array(dwt_features))
+
+
+print('Fused vector value:')
 print(fused_vector)
