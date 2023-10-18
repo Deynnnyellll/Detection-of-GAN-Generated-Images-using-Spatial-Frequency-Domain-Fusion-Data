@@ -57,7 +57,3 @@ def dwt_2d(image):
 
   return hh_subband
 
-image = "1.jpg"
-image1 = preprocessing(image)
-
-dwt_2d(image1)
