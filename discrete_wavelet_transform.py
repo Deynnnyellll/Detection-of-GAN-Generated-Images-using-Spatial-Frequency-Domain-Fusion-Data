@@ -55,5 +55,9 @@ def dwt_2d(image):
   # cv2.waitKey(0)
   # cv2.destroyAllWindows()
 
-
   return hh_subband
+
+image = "1.jpg"
+image1 = preprocessing(image)
+
+dwt_2d(image1)

@@ -87,13 +87,13 @@ def get_data(directory):
 
 
 # provide directory for real and gan 
-real_directory = ""
-gan_directory = ""
+real_directory = "/Users/Danniel/Downloads/image"
+# gan_directory = ""
 
 
 # run data preparation
 real_data = get_data(real_directory)
-gan_data = get_data(gan_directory)
+# gan_data = get_data(gan_directory)
 
 # train the data
 # train(real_data, gan_data)
