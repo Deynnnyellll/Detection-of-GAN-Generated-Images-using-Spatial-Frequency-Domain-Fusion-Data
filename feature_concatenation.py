@@ -8,7 +8,7 @@ import numpy as np
 
 
 def feature_fusion(frequency_spec, texture_desc):
-    fused_features = np.concatenate((frequency_spec, texture_desc), axis=1)
+    fused_features = frequency_spec + texture_desc
 
     '''
     not final
