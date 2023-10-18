@@ -16,7 +16,7 @@ import cv2
 import os
 
 
-def train(directory):
+def get_data(directory):
     # store multiple images into lis
     images = []
 
@@ -69,21 +69,31 @@ def train(directory):
     # applying feature fusion
     fused_features = []
 
-    for i in dwt_img_features:
-        for j in lbp_img_features:
-            feature_vector = feature_fusion(i, j)
+    for dwt_features, lbp_features in zip(dwt_img_features, lbp_img_features):
+        feature_vector = feature_fusion(dwt_features, lbp_features)
+        fused_features.append(feature_vector)
 
-            # store the fused features in fused_features list
-            fused_features.append(feature_vector)
-    
-    
-    # Print the fused features
-    for i in fused_features:
-        print('\n\n')
-        print(i)   
+    return fused_features
 
 
-    # svm implementation
+# def train(real, gan):
+#     print("----------------------------Real Data-------------------------------\n")
+#     for i in real:
+#         print(i)
 
-directory = "/Users/Danniel/Downloads/images"
-train(directory) 
+#     print("\n\n---------------------------GAN Data-------------------------------\n")
+#     for i in gan:
+#         print(i)
+
+
+# provide directory for real and gan 
+real_directory = ""
+gan_directory = ""
+
+
+# run data preparation
+real_data = get_data(real_directory)
+gan_data = get_data(gan_directory)
+
+# train the data
+# train(real_data, gan_data)
