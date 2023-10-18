@@ -56,5 +56,8 @@ lbp_map, lbp_values = lbp(preprocessed_image)
 # plt.show()
 
 # Display the LBP values
+print('...')
+print("Applying Local Binary Pattern:") 
+print('...')
 print("LBP Value:")
 print(lbp_values)
