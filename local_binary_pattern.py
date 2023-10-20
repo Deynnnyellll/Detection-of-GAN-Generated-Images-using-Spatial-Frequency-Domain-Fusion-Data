@@ -39,25 +39,25 @@ def lbp(image):
     return lbp_feature_map, np.array(lbp_values)
 
 # Load and preprocess the image as grayscale
-image_path = '1.jpg'
-preprocessed_image = preprocessing(image_path)
+# image_path = '1.jpg'
+# preprocessed_image = preprocessing(image_path)
 
-# Calculate LBP feature map and values
-lbp_map, lbp_values = lbp(preprocessed_image)
+# # Calculate LBP feature map and values
+# lbp_map, lbp_values = lbp(preprocessed_image)
 
-# Display the LBP feature map
-# plt.imshow(np.array(lbp_map), cmap="gray")
-# plt.title("LBP Feature Map")
-# plt.show()
+# # Display the LBP feature map
+# # plt.imshow(np.array(lbp_map), cmap="gray")
+# # plt.title("LBP Feature Map")
+# # plt.show()
 
-# # Display the LBP values as grayscale
-# plt.imshow(np.array(lbp_values), cmap="gray")
-# plt.title("LBP Values")
-# plt.show()
+# # # Display the LBP values as grayscale
+# # plt.imshow(np.array(lbp_values), cmap="gray")
+# # plt.title("LBP Values")
+# # plt.show()
 
-# Display the LBP values
-print('...')
-print("Applying Local Binary Pattern:") 
-print('...')
-print("LBP Value:")
-print(lbp_values)
+# # Display the LBP values
+# print('...')
+# print("Applying Local Binary Pattern:") 
+# print('...')
+# print("LBP Value:")
+# print(lbp_values)

@@ -8,6 +8,7 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 from preprocessing import preprocessing
+from test_app import predict
 
 class Ui_MainWindow(QMainWindow):
     def __init__(self):
@@ -295,7 +296,7 @@ class Ui_MainWindow(QMainWindow):
         self.uploadLabel.show()
         self.aboutBar_2.show()
         self.uploadButton.clicked.connect(self.uploadImage)
-        self.homeBar.clicked.connect(self.feature_extraction)
+        self.homeBar.clicked.connect(self.predict_result)
 
     def uploadImage(self):
         home_dir = str(Path.home())
@@ -311,11 +312,10 @@ class Ui_MainWindow(QMainWindow):
             self.images.append(fname)
             print(len(self.images))
 
-    def feature_extraction(self):
+    def predict_result(self):
         image = self.images[0]
-        preprocessed_img = preprocessing(image)
-
-        frequency_features = dwt_2d(preprocessed_img)
+        
+        result = predict(image)
         
       
 

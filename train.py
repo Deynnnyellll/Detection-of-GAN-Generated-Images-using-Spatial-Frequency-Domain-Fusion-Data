@@ -76,9 +76,12 @@ def get_data(directory):
 def prepare_data(real, gan):
     print("----------------------------Preparing the Data-------------------------------\n")  
 
+    real = np.array(real)
+    gan = np.array(gan)
+    
     #label real  and gan datasets
     real_label = np.ones((len(real), 1))
-    gan_label = np.zeros((len(gan), 1))
+    gan_label = -np.ones((len(gan), 1))
 
 
     # combine the labels and datasets
@@ -91,15 +94,13 @@ def prepare_data(real, gan):
     label_final = dataset_labels.reshape(dataset_labels.shape[0])
 
 
-
     print("----------------------Training Datasets--------------------------\n")
-
     # initialize parameter
     kernel_type = 2 #rbf (ginawa kong rbf muna same sa gan synthesized na study)
     C = 1.0
 
     # check if length of datasets is equal to the length of labels
-    if len(label_final) == len(datasets_final):
+    if len(dataset_labels) == len(datasets_final):
         prob = svm_problem(label_final, datasets_final)
         param = svm_parameter(f'-t {kernel_type} -c {C}')
         model = svm_train(prob, param)
@@ -112,10 +113,9 @@ def prepare_data(real, gan):
         print("Lenght of Labels: ", len(dataset_labels))
 
 
-
 # provide directory for real and gan 
-real_directory = "/Users/Danniel/Documents/datasets/real"
-gan_directory = "/Users/Danniel/Documents/datasets/gan"
+real_directory = "/Users/Danniel/Downloads/real_test"
+gan_directory = "/Users/Danniel/Downloads/gan_test"
 
 
 # run data preparation
