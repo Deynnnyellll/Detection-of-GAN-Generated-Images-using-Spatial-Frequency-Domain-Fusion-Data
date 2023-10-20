@@ -80,8 +80,8 @@ def prepare_data(real, gan):
     gan = np.array(gan)
     
     #label real  and gan datasets
-    real_label = np.ones((len(real), 1))
-    gan_label = -np.ones((len(gan), 1))
+    real_label = np.ones(len(real))
+    gan_label = np.zeros(len(gan))
 
 
     # combine the labels and datasets
@@ -90,7 +90,12 @@ def prepare_data(real, gan):
     datasets = np.vstack((real, gan))
 
     # reshape the labels and datasets for svm requirements
-    datasets_final = datasets.reshape(datasets.shape[0], -1)
+    # datasets_final = datasets.reshape(datasets.shape[0], -1)
+    datasets_final = []
+
+    for i in datasets:
+        flattened_feature = i.flatten()
+        datasets_final.append(flattened_feature)
     label_final = dataset_labels.reshape(dataset_labels.shape[0])
 
 
@@ -100,7 +105,7 @@ def prepare_data(real, gan):
     C = 1.0
 
     # check if length of datasets is equal to the length of labels
-    if len(dataset_labels) == len(datasets_final):
+    if len(label_final) == len(datasets_final):
         prob = svm_problem(label_final, datasets_final)
         param = svm_parameter(f'-t {kernel_type} -c {C}')
         model = svm_train(prob, param)
@@ -109,8 +114,8 @@ def prepare_data(real, gan):
     
     else:
         print("Length of datasets and labels do not match\n")  
-        print("Length of Datasets: ", len(datasets))
-        print("Lenght of Labels: ", len(dataset_labels))
+        print("Length of Datasets: ", len(datasets_final))
+        print("Length of Labels: ", len(label_final))
 
 
 # provide directory for real and gan 
