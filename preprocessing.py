@@ -23,13 +23,10 @@ def preprocessing(image):
         print("\n\nImage is already in 256x256\n\n")
         final_image = image
     else:
-        print("\n\nWarning: Image is not resized to 256x256")
-        # time.sleep(0.5)
+        print("\n\nWarning: Image is not resized")
         print('...')
-        # time.sleep(0.5)
-        print("\nPerforming image resizing (256x256)")
+        print("\nPerforming image resizing")
         print('...')
-        # time.sleep(0.5)
         final_image = cv2.resize(image, dsize=(512, 512))
 
     # Noise reduction using Gaussian Blurring
@@ -45,6 +42,3 @@ def preprocessing(image):
     # cv2.destroyAllWindows()
 
     return noise_reduced_img
-
-
-image = "1.jpg"

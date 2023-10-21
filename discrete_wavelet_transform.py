@@ -6,7 +6,8 @@ as one of the feature extraction techniques
 import numpy as np
 import cv2
 from preprocessing import preprocessing
-
+import os
+import matplotlib.pyplot as plt
 
 #applying haar wavelet
 def haar_transform(matrix):
@@ -31,7 +32,6 @@ def dwt_2d(image):
 
   transformed_image = np.copy(image)
 
-  high_freq = np.zeros((height, width), dtype=float)
 
   while height >= 2 and width >= 2:
     for i in range(height):
@@ -56,4 +56,3 @@ def dwt_2d(image):
   # cv2.destroyAllWindows()
 
   return hh_subband
-

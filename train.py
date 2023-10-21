@@ -5,7 +5,6 @@ you need to install this package by running this command:
 pip install -U libsvm-official
 '''
 import numpy as np
-import scipy
 from libsvm.svmutil import svm_problem, svm_parameter, svm_train, svm_save_model
 from preprocessing import preprocessing
 from discrete_wavelet_transform import dwt_2d
@@ -13,6 +12,7 @@ from local_binary_pattern import lbp
 from test import concatenate_lbp_dwt
 import time
 import os
+import matplotlib.pyplot as plt
 
 
 def get_data(directory):
@@ -68,20 +68,26 @@ def get_data(directory):
 
     for dwt_features, lbp_features in zip(dwt_img_features, lbp_img_features):
         feature_vector = concatenate_lbp_dwt(lbp_features, dwt_features)
+        plt.imshow(feature_vector, cmap="gray")
+        plt.title("Feature Vector")
+        plt.show()
         fused_features.append(feature_vector)
 
     return fused_features
 
 
 def prepare_data(real, gan):
-    print("----------------------------Preparing the Data-------------------------------\n")  
+    print("----------------------------Preparing the Data-------------------------------\n")
 
-    real = np.array(real)
-    gan = np.array(gan)
+    print("----------------------------Real Data-------------------------------\n")
+    print(real)
+    print("----------------------------GAN Data-------------------------------\n")
+    print(gan)
+
     
     #label real  and gan datasets
-    real_label = np.ones(len(real))
-    gan_label = np.zeros(len(gan))
+    real_label = np.ones((len(real), 1))
+    gan_label = np.zeros((len(gan), 1))
 
 
     # combine the labels and datasets
@@ -97,7 +103,6 @@ def prepare_data(real, gan):
         flattened_feature = i.flatten()
         datasets_final.append(flattened_feature)
     label_final = dataset_labels.reshape(dataset_labels.shape[0])
-
 
     print("----------------------Training Datasets--------------------------\n")
     # initialize parameter
@@ -119,8 +124,8 @@ def prepare_data(real, gan):
 
 
 # provide directory for real and gan 
-real_directory = "/Users/Danniel/Downloads/real_test"
-gan_directory = "/Users/Danniel/Downloads/gan_test"
+real_directory = "/Users/Danniel/Downloads/Low Dataset/real"
+gan_directory = "/Users/Danniel/Downloads/Low Dataset/gan"
 
 
 # run data preparation
@@ -131,5 +136,5 @@ gan_data = get_data(gan_directory)
 model = prepare_data(real_data, gan_data)
 
 #save the model
-model_file = "faces.model"
+model_file = "/Users/Danniel/Downloads/faces.model"
 svm_save_model(model_file, model)

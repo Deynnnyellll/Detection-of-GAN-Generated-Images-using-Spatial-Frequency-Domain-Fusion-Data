@@ -8,7 +8,7 @@ from test import concatenate_lbp_dwt
 
 def predict(image):
     # load the model
-    model_file = "faces.model"
+    model_file = "/Users/Danniel/Downloads/faces.model"
     loaded_model = svm_load_model(model_file)
 
     preprocessed_img = preprocessing(image)
@@ -28,3 +28,8 @@ def predict(image):
         print("Real")
     else: 
         print("GAN")
+
+real = "/Users/Danniel/Downloads/Datasets Faces/FFHQ/00225.png"
+gan = "/Users/Danniel/Downloads/Datasets Faces/000000/000129.png"
+
+predict(real)
