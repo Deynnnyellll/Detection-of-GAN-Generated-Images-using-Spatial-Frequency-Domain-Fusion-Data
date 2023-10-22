@@ -20,8 +20,10 @@ def predict(image):
     feature_vector = []
     feature_vector.append(flatten_img)
 
+
     # predict the result
-    predicted_labels, _, _ = svm_predict([], feature_vector, loaded_model)
+    predicted_labels, _, _ = svm_predict([], feature_vector, loaded_model, "-q")
+    print(predicted_labels)
 
     print("------------------------------------------RESULT-----------------------------------\n")
     if predicted_labels[0] == 1.0:
@@ -29,7 +31,7 @@ def predict(image):
     else: 
         print("GAN")
 
-real = "/Users/Danniel/Downloads/Datasets Faces/FFHQ/00225.png"
-gan = "/Users/Danniel/Downloads/Datasets Faces/000000/000129.png"
+real = "/Users/Danniel/Downloads/Low Dataset/real/00002.png"
+gan = "/Users/Danniel/Downloads/Low Dataset/gan/000000.png"
 
 predict(real)

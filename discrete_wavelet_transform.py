@@ -56,3 +56,55 @@ def dwt_2d(image):
   # cv2.destroyAllWindows()
 
   return hh_subband
+
+def hh_subband_mean(dwt):
+  hh_subband = dwt
+
+  hh_mean = sum(map(sum, hh_subband)) / (len(hh_subband) * len(hh_subband[0]))
+
+  return hh_mean
+
+
+def visualize(directory):
+  images = []
+
+  for filename in os.listdir(directory):
+        image = os.path.join(directory, filename)
+        if image is not None:
+            images.append(image)
+
+  preprocessed = []
+  for i in images:
+    preprossed_img = preprocessing(i)
+    preprocessed.append(preprossed_img)
+
+  dwt = []
+  for i in preprocessed:
+    dwt_img = dwt_2d(i)
+    dwt.append(dwt_img)
+
+  mean = []
+  for i in dwt:
+    mean_img = hh_subband_mean(i)
+    mean.append(mean_img)
+
+  return mean
+
+# directory = "/Users/Danniel/Documents/datasets/real"
+# directory1 = "/Users/Danniel/Documents/datasets/gan"
+
+
+# real = visualize(directory)
+# gan = visualize(directory1)
+
+# plt.plot(real, label="real", color="blue")
+# plt.plot(gan, label="gan", color="red")
+
+# # Adding labels and a title
+# plt.xlabel('Index')
+# plt.ylabel('Mean Value')
+# plt.title('Mean Values for Two Classes')
+
+
+# # Display the plot
+# plt.show()

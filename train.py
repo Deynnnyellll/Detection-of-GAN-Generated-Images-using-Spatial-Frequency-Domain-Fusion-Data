@@ -12,7 +12,6 @@ from local_binary_pattern import lbp
 from test import concatenate_lbp_dwt
 import time
 import os
-import matplotlib.pyplot as plt
 
 
 def get_data(directory):
@@ -68,9 +67,6 @@ def get_data(directory):
 
     for dwt_features, lbp_features in zip(dwt_img_features, lbp_img_features):
         feature_vector = concatenate_lbp_dwt(lbp_features, dwt_features)
-        plt.imshow(feature_vector, cmap="gray")
-        plt.title("Feature Vector")
-        plt.show()
         fused_features.append(feature_vector)
 
     return fused_features
@@ -96,7 +92,6 @@ def prepare_data(real, gan):
     datasets = np.vstack((real, gan))
 
     # reshape the labels and datasets for svm requirements
-    # datasets_final = datasets.reshape(datasets.shape[0], -1)
     datasets_final = []
 
     for i in datasets:
@@ -104,23 +99,26 @@ def prepare_data(real, gan):
         datasets_final.append(flattened_feature)
     label_final = dataset_labels.reshape(dataset_labels.shape[0])
 
-    print("----------------------Training Datasets--------------------------\n")
+    print("----------------------Model Training--------------------------\n")
     # initialize parameter
     kernel_type = 2 #rbf (ginawa kong rbf muna same sa gan synthesized na study)
-    C = 1.0
+    C = 0.5
 
     # check if length of datasets is equal to the length of labels
     if len(label_final) == len(datasets_final):
         prob = svm_problem(label_final, datasets_final)
+        validate = svm_parameter(f'-t {kernel_type} -c {C} -v 5')
         param = svm_parameter(f'-t {kernel_type} -c {C}')
+        initial_accurary = svm_train(prob, validate)
+
         model = svm_train(prob, param)
-        
-        return model
     
     else:
         print("Length of datasets and labels do not match\n")  
         print("Length of Datasets: ", len(datasets_final))
         print("Length of Labels: ", len(label_final))
+
+    return model    
 
 
 # provide directory for real and gan 
