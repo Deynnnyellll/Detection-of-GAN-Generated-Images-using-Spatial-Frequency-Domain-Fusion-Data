@@ -12,6 +12,7 @@ from local_binary_pattern import lbp
 from test import concatenate_lbp_dwt
 import time
 import os
+import csv
 
 
 def get_data(directory):
@@ -56,10 +57,10 @@ def get_data(directory):
     for i in preprocessed_img:
         texture_features = lbp(i)
         print('\n\n')
-        print(texture_features[1])
+        print(texture_features)
 
         # store the features in a lbp_img_features list
-        lbp_img_features.append(texture_features[1])
+        lbp_img_features.append(texture_features)
     print('\nLBP application finished\n\n')
 
     # applying feature fusion
@@ -99,6 +100,13 @@ def prepare_data(real, gan):
         datasets_final.append(flattened_feature)
     label_final = dataset_labels.reshape(dataset_labels.shape[0])
 
+    
+    with open("data.csv", "w") as file:
+        writer = csv.writer(file)
+        for labels, data in zip (datasets, dataset_labels):
+            writer.writerow([labels, data])
+
+
     print("----------------------Model Training--------------------------\n")
     # initialize parameter
     kernel_type = 2 #rbf (ginawa kong rbf muna same sa gan synthesized na study)
@@ -116,14 +124,14 @@ def prepare_data(real, gan):
     else:
         print("Length of datasets and labels do not match\n")  
         print("Length of Datasets: ", len(datasets_final))
-        print("Length of Labels: ", len(label_final))
+        print("Length of Labels: ", len(label_final)) 
 
-    return model    
 
 
 # provide directory for real and gan 
 real_directory = "/Users/Danniel/Downloads/Low Dataset/real"
 gan_directory = "/Users/Danniel/Downloads/Low Dataset/gan"
+
 
 
 # run data preparation
@@ -133,6 +141,8 @@ gan_data = get_data(gan_directory)
 # train the data
 model = prepare_data(real_data, gan_data)
 
-#save the model
+# save the model
 model_file = "/Users/Danniel/Downloads/faces.model"
 svm_save_model(model_file, model)
+
+data = "data.csv"

@@ -31,7 +31,7 @@ def predict(image):
     else: 
         print("GAN")
 
-real = "/Users/Danniel/Downloads/Low Dataset/real/00002.png"
-gan = "/Users/Danniel/Downloads/Low Dataset/gan/000000.png"
+# real = "/Users/Danniel/Downloads/Low Dataset/real/00002.png"
+# gan = "/Users/Danniel/Downloads/Low Dataset/gan/000000.png"
 
-predict(real)
+# predict(real)

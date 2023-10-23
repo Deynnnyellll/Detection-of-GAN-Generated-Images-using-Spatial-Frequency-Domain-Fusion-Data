@@ -313,9 +313,8 @@ class Ui_MainWindow(QMainWindow):
             print(len(self.images))
 
     def predict_result(self):
-        image = self.images[0]
-        
-        result = predict(image)
+        for i in self.images:
+            result = predict(i)
         
       
 
