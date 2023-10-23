@@ -1,6 +1,6 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from preprocessing import preprocessing
+from matplotlib import pyplot as plt
 
 def get_pixel(image, x, y):
     if 0 <= x < len(image) and 0 <= y < len(image[0]):
@@ -26,38 +26,30 @@ def lbp_calculated_pixel(image, x, y):
 
 def lbp(image):
     height, width = len(image), len(image[0])
-    lbp_feature_map = [[0] * width for _ in range(height)]
-    lbp_values = [[0] * width for _ in range(height)]
+    lbp_values = np.zeros((height, width), dtype=np.uint8)
 
     for i in range(1, height - 1):
         for j in range(1, width - 1):
             lbp_value = lbp_calculated_pixel(image, i, j)
-            lbp_feature_map[i][j] = lbp_value
             lbp_values[i][j] = lbp_value
-        
 
-    return lbp_feature_map, np.array(lbp_values)
+    return lbp_values
 
-# Load and preprocess the image as grayscale
+# # #Load and preprocess the image as grayscale
 # image_path = '1.jpg'
 # preprocessed_image = preprocessing(image_path)
 
-# # Calculate LBP feature map and values
-# lbp_map, lbp_values = lbp(preprocessed_image)
-
-# # Display the LBP feature map
-# # plt.imshow(np.array(lbp_map), cmap="gray")
-# # plt.title("LBP Feature Map")
-# # plt.show()
+# # # Calculate LBP values
+# lbp_values = lbp(preprocessed_image)
 
 # # # Display the LBP values as grayscale
-# # plt.imshow(np.array(lbp_values), cmap="gray")
-# # plt.title("LBP Values")
-# # plt.show()
+# plt.imshow(lbp_values, cmap="gray")
+# plt.title("LBP Values")
+# plt.show()
 
-# # Display the LBP values
+# # # Display the LBP values
 # print('...')
-# print("Applying Local Binary Pattern:") 
+# print("Applying Local Binary Pattern:")
 # print('...')
 # print("LBP Value:")
 # print(lbp_values)
