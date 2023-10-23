@@ -103,7 +103,7 @@ def prepare_data(real, gan):
     
     with open("data.csv", "w") as file:
         writer = csv.writer(file)
-        for labels, data in zip (datasets, dataset_labels):
+        for labels, data in zip (dataset_labels, datasets):
             writer.writerow([labels, data])
 
 
@@ -124,25 +124,41 @@ def prepare_data(real, gan):
     else:
         print("Length of datasets and labels do not match\n")  
         print("Length of Datasets: ", len(datasets_final))
-        print("Length of Labels: ", len(label_final)) 
+        print("Length of Labels: ", len(label_final))
+
+    return model
+
+def read_data_from_csv():
+    labels = []
+    data = []
+
+    with open("data.csv", "r", newline="") as f:
+        reader = csv.reader(f)
+        # next(reader)
+
+        for row in reader:
+            label, feature = row
+            labels.append(np.fromstring(label))
+
+    print(labels)   
 
 
 
-# provide directory for real and gan 
-real_directory = "/Users/Danniel/Downloads/Low Dataset/real"
-gan_directory = "/Users/Danniel/Downloads/Low Dataset/gan"
+# # provide directory for real and gan 
+# real_directory = "/Users/Danniel/Downloads/Low Dataset/real"
+# gan_directory = "/Users/Danniel/Downloads/Low Dataset/gan"
 
 
 
-# run data preparation
-real_data = get_data(real_directory)
-gan_data = get_data(gan_directory)
+# # run data preparation
+# real_data = get_data(real_directory)
+# gan_data = get_data(gan_directory)
 
-# train the data
-model = prepare_data(real_data, gan_data)
+# # train the data
+# model = prepare_data(real_data, gan_data)
 
-# save the model
-model_file = "/Users/Danniel/Downloads/faces.model"
-svm_save_model(model_file, model)
+# # save the model
+# model_file = "/Users/Danniel/Downloads/faces.model"
+# svm_save_model(model_file, model)
 
-data = "data.csv"
+read_data_from_csv()
