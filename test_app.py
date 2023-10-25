@@ -4,25 +4,58 @@ from preprocessing import preprocessing
 from discrete_wavelet_transform import dwt_2d
 from local_binary_pattern import lbp
 from test import concatenate_lbp_dwt
+import os
 
 
-def predict(image):
+def predict(directory):
+    images = []
+
+    # load the images and store in images list
+    for filename in os.listdir(directory):
+        image = os.path.join(directory, filename)
+        if image is not None:
+            images.append(image)
+
+    print(len(images))        
+
+
     # load the model
-    model_file = "/Users/Danniel/Downloads/faces.model"
+    model_file = "/Users/Danniel/Downloads/faces.txt"
     loaded_model = svm_load_model(model_file)
 
-    preprocessed_img = preprocessing(image)
-    dwt_feature = dwt_2d(preprocessed_img)
-    lbp_feature = lbp(preprocessed_img)
-    fused_vector = concatenate_lbp_dwt(lbp_feature[1], dwt_feature)
+    # preprocessing
+    preprocessed_img = []
+    for i in images:
+        preprocessed_img.append(preprocessing(i))      
+
+
+    #  discrete wavelet transform
+    dwt_feature = []
+    for i in preprocessed_img:
+        dwt_feature.append(dwt_2d(i))
+
+
+    # local binary pattern
+    lbp_feature = []
+    for i in preprocessed_img:
+        lbp_feature.append(lbp(i))
+
+
+    # feature fusion
+    fused_vector = []
+    for frequency, texture in zip(dwt_feature, lbp_feature):
+        fused_vector.append(concatenate_lbp_dwt(texture, frequency))
+
     print("\n\n",fused_vector)
-    flatten_img = fused_vector.flatten()
+
+    # flatten the feature vector
     feature_vector = []
-    feature_vector.append(flatten_img)
+    for i in fused_vector:
+        feature_vector.append(i.flatten())
 
 
     # predict the result
-    predicted_labels, _, _ = svm_predict([], feature_vector, loaded_model, "-q")
+    predicted_labels, _, _ = svm_predict([], feature_vector, loaded_model, '-q')
     print(predicted_labels)
 
     print("------------------------------------------RESULT-----------------------------------\n")
@@ -31,7 +64,8 @@ def predict(image):
     else: 
         print("GAN")
 
-# real = "/Users/Danniel/Downloads/Low Dataset/real/00002.png"
-# gan = "/Users/Danniel/Downloads/Low Dataset/gan/000000.png"
 
-# predict(real)
+#provide directory for testing dataset
+dir = "/Users/Danniel/Downloads/gan_test"
+
+predict(dir)

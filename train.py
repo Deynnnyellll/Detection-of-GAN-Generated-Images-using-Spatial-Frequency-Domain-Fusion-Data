@@ -13,10 +13,11 @@ from test import concatenate_lbp_dwt
 import time
 import os
 import csv
+import matplotlib.pyplot as plt
 
 
 def get_data(directory):
-    # store multiple images into lis
+    # store multiple images into list
     images = []
 
     for filename in os.listdir(directory):
@@ -74,14 +75,7 @@ def get_data(directory):
 
 
 def prepare_data(real, gan):
-    print("----------------------------Preparing the Data-------------------------------\n")
-
-    print("----------------------------Real Data-------------------------------\n")
-    print(real)
-    print("----------------------------GAN Data-------------------------------\n")
-    print(gan)
-
-    
+    print("----------------------------Preparing the Data-------------------------------\n") 
     #label real  and gan datasets
     real_label = np.ones((len(real), 1))
     gan_label = np.zeros((len(gan), 1))
@@ -91,6 +85,7 @@ def prepare_data(real, gan):
     dataset_labels = np.vstack((real_label, gan_label))
     print(len(dataset_labels))
     datasets = np.vstack((real, gan))
+    print(datasets[0].shape)
 
     # reshape the labels and datasets for svm requirements
     datasets_final = []
@@ -99,6 +94,8 @@ def prepare_data(real, gan):
         flattened_feature = i.flatten()
         datasets_final.append(flattened_feature)
     label_final = dataset_labels.reshape(dataset_labels.shape[0])
+
+    print(datasets_final[0])
 
     
     with open("data.csv", "w") as file:
@@ -128,37 +125,42 @@ def prepare_data(real, gan):
 
     return model
 
-def read_data_from_csv():
-    labels = []
-    data = []
 
-    with open("data.csv", "r", newline="") as f:
-        reader = csv.reader(f)
-        # next(reader)
+def visualize(real, gan):
 
-        for row in reader:
-            label, feature = row
-            labels.append(np.fromstring(label))
+    mean1 = [np.mean(features) for features in real]
+    mean2 = [np.mean(features) for features in gan]
 
-    print(labels)   
+    plt.plot(mean1, label="real", color="blue")
+    plt.plot(mean2, label="gan", color="red")
+
+    # Adding labels and a title
+    plt.xlabel('Index')
+    plt.ylabel('Mean Value')
+    plt.title('Mean Values for Two Classes')
 
 
-
-# # provide directory for real and gan 
-# real_directory = "/Users/Danniel/Downloads/Low Dataset/real"
-# gan_directory = "/Users/Danniel/Downloads/Low Dataset/gan"
+    # Display the plot
+    plt.show()
 
 
 
-# # run data preparation
-# real_data = get_data(real_directory)
-# gan_data = get_data(gan_directory)
+
+# provide directory for real and gan 
+real_directory = "/Users/Danniel/Downloads/real_test"
+gan_directory = "/Users/Danniel/Downloads/gan_test"
+
+
+
+# run data preparation
+real_data = get_data(real_directory)
+gan_data = get_data(gan_directory)
+
 
 # # train the data
-# model = prepare_data(real_data, gan_data)
+model = get_data(real_data, gan_data)
+
 
 # # save the model
-# model_file = "/Users/Danniel/Downloads/faces.model"
-# svm_save_model(model_file, model)
-
-read_data_from_csv()
+model_file = "/Users/Danniel/Downloads/faces.txt"
+svm_save_model(model_file, model)
