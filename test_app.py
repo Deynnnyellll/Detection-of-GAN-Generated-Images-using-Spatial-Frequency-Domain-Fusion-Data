@@ -66,6 +66,6 @@ def predict(directory):
 
 
 #provide directory for testing dataset
-dir = "/Users/Danniel/Downloads/gan_test"
+dir = ""
 
 predict(dir)
