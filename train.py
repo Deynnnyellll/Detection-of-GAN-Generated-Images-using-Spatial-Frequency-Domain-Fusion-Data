@@ -162,5 +162,5 @@ model = get_data(real_data, gan_data)
 
 
 # # save the model
-model_file = "/Users/Danniel/Downloads/faces.txt"
+model_file = "/Users/Danniel/Downloads/faces.model"
 svm_save_model(model_file, model)

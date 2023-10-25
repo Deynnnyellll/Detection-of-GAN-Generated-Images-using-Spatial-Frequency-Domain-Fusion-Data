@@ -56,14 +56,16 @@ def predict(directory):
 
     # predict the result
     predicted_labels, _, _ = svm_predict([], feature_vector, loaded_model, '-q')
-    print(predicted_labels)
 
     print("------------------------------------------RESULT-----------------------------------\n")
-    if predicted_labels[0] == 1.0:
-        print("Real")
-    else: 
-        print("GAN")
+    result = []
+    for i in predicted_labels:
+        if i == 1.0:
+            result.append("Real")
+        elif i == 0.0:
+            result.append("GAN")
 
+    print(result)
 
 #provide directory for testing dataset
 dir = ""
