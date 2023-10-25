@@ -1,5 +1,5 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
-from PyQt6.QtWidgets import (QFileDialog, QMainWindow)
+from PyQt6.QtWidgets import (QFileDialog, QMainWindow, QScrollArea)
 from PyQt6.QtGui import QPixmap
 import sys
 from pathlib import Path
@@ -8,7 +8,7 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 from preprocessing import preprocessing
-from test_app import predict
+import os
 
 class Ui_MainWindow(QMainWindow):
     def __init__(self):
@@ -285,8 +285,12 @@ class Ui_MainWindow(QMainWindow):
         self.eye2.hide()
         self.imageLabel.show()
         self.resultLabel.show()
+        self.aibutton.raise_()
         self.aibutton.show()
+        self.aibutton.clicked.connect(self.predict_result)
         self.clearbutton.show()
+        self.clearbutton.raise_()
+        self.clearbutton.clicked.connect(self.clear_image)
         self.Rectangle1.show()
         self.Rectangle2.show()
         self.uploadBar.show()
@@ -298,23 +302,64 @@ class Ui_MainWindow(QMainWindow):
         self.uploadButton.clicked.connect(self.uploadImage)
         self.homeBar.clicked.connect(self.predict_result)
 
+        self.image_container = QtWidgets.QWidget(parent=self.centralwidget)
+        self.image_container.setStyleSheet("background-color: transparent")
+        self.image_container.setGeometry(85, 111, 350, 420) 
+
+        self.image_grid_layout = QtWidgets.QGridLayout(self.image_container)
+
+
+        
+
     def uploadImage(self):
         home_dir = str(Path.home())
-        fname, _ = QFileDialog.getOpenFileName(self, 'Open file', home_dir)
+        fname, _ = QFileDialog.getOpenFileNames(self, 'Open file', home_dir)
+
+        self.image_container.show()
+        self.uploadButton.hide()
 
         if fname:
-            pixmap = QPixmap(fname)
+            self.image_container.show()
 
-            self.Wrapper.setPixmap(pixmap)
+            row, col = 0, 0
 
-            print(fname)
+            for file in fname:
+                self.images.append(file)
 
-            self.images.append(fname)
-            print(len(self.images))
+                pixmap = QPixmap(file)
+
+                pixmap = pixmap.scaled(150, 150)
+
+                label = QtWidgets.QLabel()
+                label.setPixmap(pixmap)
+
+            
+
+                self.image_grid_layout.addWidget(label, row, col)
+
+                col += 1
+                if col >= 3:
+                    col = 0
+                    row += 1
+
+            print(self.images)
 
     def predict_result(self):
-        for i in self.images:
-            result = predict(i)
+        print("Clicked")
+
+
+    def clear_image(self):
+        self.images.clear()
+        self.uploadButton.show()
+        self.image_container.hide()
+
+        os.system('cls')
+
+        msg = QtWidgets.QMessageBox(parent=self.centralwidget)
+        msg.setText("Cleared")    
+
+        print("Images: ", len(self.images))  
+
         
       
 
