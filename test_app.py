@@ -34,6 +34,7 @@ def predict(directory):
     print("\n\n-------------------DWT----------------------------\n")
     for i in preprocessed_img:
         dwt_feature.append(dwt_2d(i))
+        print(f"\n{len(dwt_feature)} out of {len(preprocessed_img)} images\nPercentage: {(float(len(dwt_feature)) / float(len(preprocessed_img)) * 100)}\n")
 
 
     # local binary pattern
@@ -43,6 +44,7 @@ def predict(directory):
         print("LBP Features:\n", lbp(i))
         print("\n")
         lbp_feature.append(lbp(i))
+        print(f"\n{len(lbp_feature)} out of {len(preprocessed_img)} images\nPercentage: {(float(len(lbp_feature)) / float(len(preprocessed_img)) * 100)}\n")
 
 
     # feature fusion
@@ -52,6 +54,7 @@ def predict(directory):
         print("Fused Features:\n", concatenate_lbp_dwt(texture, frequency))
         print("\n")
         fused_vector.append(concatenate_lbp_dwt(texture, frequency))
+        print(f"\n{len(fused_vector)} out of {len(images)} images\nPercentage: {(float(len(fused_vector)) / float(len(preprocessed_img)) * 100)}\n")
 
     # flatten the feature vector
     feature_vector = []

@@ -50,6 +50,7 @@ def get_data(directory):
 
         # store the features in a dwt_img_features list
         dwt_img_features.append(freq_features)
+        print(f"\n{len(dwt_img_features)} out of {len(preprocessed_img)} images\nPercentage: {(float(len(dwt_img_features)) / float(len(preprocessed_img)) * 100)}\n")
     print("\nDWT application finished\n\n")
 
     # applying local binary pattern
@@ -62,6 +63,7 @@ def get_data(directory):
 
         # store the features in a lbp_img_features list
         lbp_img_features.append(texture_features)
+        print(f"\n{len(lbp_img_features)} out of {len(preprocessed_img)} images\nPercentage: {(float(len(lbp_img_features)) / float(len(preprocessed_img)) * 100)}\n")
     print('\nLBP application finished\n\n')
 
     # applying feature fusion
@@ -70,6 +72,7 @@ def get_data(directory):
     for dwt_features, lbp_features in zip(dwt_img_features, lbp_img_features):
         feature_vector = concatenate_lbp_dwt(lbp_features, dwt_features)
         fused_features.append(feature_vector)
+        print(f"\n{len(fused_features)} out of {len(images)} images\nPercentage: {(float(len(fused_features)) / float(len(images)) * 100)}\n")
 
     return fused_features
 
@@ -158,7 +161,7 @@ gan_data = get_data(gan_directory)
 
 
 # # train the data
-model = get_data(real_data, gan_data)
+model = prepare_data(real_data, gan_data)
 
 
 # # save the model
