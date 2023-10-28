@@ -4,10 +4,6 @@ as one of the feature extraction techniques
 '''
 
 import numpy as np
-import cv2
-from preprocessing import preprocessing
-import os
-import matplotlib.pyplot as plt
 
 # applying haar wavelet
 def haar_transform(matrix):
@@ -23,32 +19,25 @@ def haar_transform(matrix):
 
 # applying 2D dwt
 def dwt_2d(image):
-  original_height, original_width = image.shape
-  height = 2**int(np.ceil(np.log2(original_height)))
-  width = 2**int(np.ceil(np.log2(original_width)))
+  height, width = image.shape
+  coefficients = []
 
-  if original_height != height or original_width != width:
-    image = cv2.resize(image, (width, height))
+  for _ in range(2):
+      for i in range(height):
+          image[i, :width] = haar_transform(image[i, :width])
 
-  transformed_image = np.copy(image)
+      for j in range(width):
+          image[:height, j] = haar_transform(image[:height, j])
 
+      # extract and store the LL, LH, HL, and HH subbands
+      LL = image[:height // 2, :width // 2]
+      LH = image[:height // 2, width // 2:]
+      HL = image[height // 2:, :width // 2]
+      HH = image[height // 2:, width // 2:]
 
-  while height >= 2 and width >= 2:
-    for i in range(height):
-      transformed_image[i, :width] = haar_transform(transformed_image[i, :width])
+      coefficients.append((LL, LH, HL, HH))
 
-    for j in range(width):
-      transformed_image[:height, j] = haar_transform(transformed_image[:height, j])
+      height //= 2
+      width //= 2
 
-    height //= 2
-    width //= 2
-
-  # getting high frequency subband (hh)
-  height, width = transformed_image.shape
-  hh_subband = transformed_image[:height // 2, width // 2:]
-  hh_subband = cv2.resize(hh_subband, dsize=(512, 512))
-
-  # for data visualization only
-  print('\nDWT Features:\n', hh_subband)
-
-  return hh_subband
+  return coefficients[0][3]

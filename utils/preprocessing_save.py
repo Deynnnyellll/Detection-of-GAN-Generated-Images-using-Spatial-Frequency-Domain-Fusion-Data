@@ -38,11 +38,16 @@ def save_image(image_list, directory):
 
 
 # directory for reading
-img_dir = ""
+img_real = "/Users/Danniel/Downloads/real"
+img_gan = "/Users/Danniel/Downloads/gan"
+
 # directory for saving (must be an empty folder)
-save_dir = ""
+save_dir_real = "/Users/Danniel/Downloads/preprocessed_real"
+save_dir_gan = "/Users/Danniel/Downloads/preprocessed_gan"
 
 # store the images
-images = load_image(img_dir)
+image_real = load_image(img_real)
+image_gan = load_image(img_gan)
 
-save_image(images, save_dir)
+save_image(image_real, save_dir_real)
+save_image(image_gan, save_dir_gan)

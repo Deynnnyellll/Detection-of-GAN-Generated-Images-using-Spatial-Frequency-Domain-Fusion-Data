@@ -13,8 +13,8 @@ from local_binary_pattern import lbp
 from test import concatenate_lbp_dwt
 import time
 import os
-import csv
 import matplotlib.pyplot as plt
+import cv2
 
 
 def get_data(directory):
@@ -24,12 +24,27 @@ def get_data(directory):
     for filename in os.listdir(directory):
         image = os.path.join(directory, filename)
         if image is not None:
-            preprocessed_img.append(image)
+            img = cv2.imread(image, cv2.IMREAD_GRAYSCALE)
+            preprocessed_img.append(img)
 
     # feature extraction
     print("Performing Feature Extraction")
     time.sleep(1)
 
+    # applying local binary pattern
+    print("Applying Local Binary Pattern")
+    lbp_img_features = []
+    for i in preprocessed_img:
+        texture_features = lbp(i)
+        print('\n\n')
+        print(texture_features)
+
+
+        # store the features in a lbp_img_features list
+        lbp_img_features.append(texture_features)
+        print(f"\n{len(lbp_img_features)} out of {len(preprocessed_img)} images\nPercentage: {(float(len(lbp_img_features)) / float(len(preprocessed_img)) * 100)}\n")
+    print('\nLBP application finished\n\n')
+    
     # applying discrete wavelet transform
     print("Applying DWT to Images")
 
@@ -40,22 +55,10 @@ def get_data(directory):
         print(freq_features)
 
         # store the features in a dwt_img_features list
-        dwt_img_features.append(freq_features)
+        dwt_img_features.append(cv2.resize(freq_features, dsize=(512, 512)))
         print(f"\n{len(dwt_img_features)} out of {len(preprocessed_img)} images\nPercentage: {(float(len(dwt_img_features)) / float(len(preprocessed_img)) * 100)}\n")
     print("\nDWT application finished\n\n")
 
-    # applying local binary pattern
-    print("Applying Local Binary Pattern")
-    lbp_img_features = []
-    for i in preprocessed_img:
-        texture_features = lbp(i)
-        print('\n\n')
-        print(texture_features)
-
-        # store the features in a lbp_img_features list
-        lbp_img_features.append(texture_features)
-        print(f"\n{len(lbp_img_features)} out of {len(preprocessed_img)} images\nPercentage: {(float(len(lbp_img_features)) / float(len(preprocessed_img)) * 100)}\n")
-    print('\nLBP application finished\n\n')
 
     # applying feature fusion
     fused_features = []
@@ -64,6 +67,7 @@ def get_data(directory):
         feature_vector = concatenate_lbp_dwt(lbp_features, dwt_features)
         fused_features.append(feature_vector)
         print(f"\n{len(fused_features)} out of {len(preprocessed_img)} images\nPercentage: {(float(len(fused_features)) / float(len(preprocessed_img)) * 100)}\n")
+
 
     return fused_features
 
@@ -91,11 +95,6 @@ def prepare_data(real, gan):
 
     print(datasets_final[0])
 
-    
-    with open("data.csv", "w") as file:
-        writer = csv.writer(file)
-        for labels, data in zip (dataset_labels, datasets):
-            writer.writerow([labels, data])
 
 
     print("----------------------Model Training--------------------------\n")
@@ -139,14 +138,18 @@ def visualize(real, gan):
 
 
 # provide directory for preprocessed real and gan images
-real_directory = "/Users/Danniel/Downloads/real_test"
-gan_directory = "/Users/Danniel/Downloads/gan_test"
+real_directory = "/Users/Danniel/Downloads/preprocessed_real"
+gan_directory = "/Users/Danniel/Downloads/preprocessed_gan"
 
 
 
 # run data preparation
 real_data = get_data(real_directory)
 gan_data = get_data(gan_directory)
+
+
+# visualize
+visualize(real_data, gan_data)
 
 
 # train the data
