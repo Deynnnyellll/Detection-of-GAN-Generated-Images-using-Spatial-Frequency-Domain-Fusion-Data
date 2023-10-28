@@ -4,6 +4,7 @@ This code is for training GAN-Generated Images and Real Images
 you need to install this package by running this command:
 pip install -U libsvm-official
 '''
+
 import numpy as np
 from libsvm.svmutil import svm_problem, svm_parameter, svm_train, svm_save_model
 from preprocessing import preprocessing
@@ -17,23 +18,13 @@ import matplotlib.pyplot as plt
 
 
 def get_data(directory):
-    # store multiple images into list
-    images = []
+    # load preprocessed images
+    preprocessed_img = []
 
     for filename in os.listdir(directory):
         image = os.path.join(directory, filename)
         if image is not None:
-            images.append(image)
-
-    # preprocessing
-    print("\nPreprocessing the images")
-    preprocessed_img = []
-    for i in images:
-        img = preprocessing(i)
-
-        preprocessed_img.append(img)
-
-    print("Number of Images: ", len(preprocessed_img))  
+            preprocessed_img.append(image)
 
     # feature extraction
     print("Performing Feature Extraction")
@@ -72,7 +63,7 @@ def get_data(directory):
     for dwt_features, lbp_features in zip(dwt_img_features, lbp_img_features):
         feature_vector = concatenate_lbp_dwt(lbp_features, dwt_features)
         fused_features.append(feature_vector)
-        print(f"\n{len(fused_features)} out of {len(images)} images\nPercentage: {(float(len(fused_features)) / float(len(images)) * 100)}\n")
+        print(f"\n{len(fused_features)} out of {len(preprocessed_img)} images\nPercentage: {(float(len(fused_features)) / float(len(preprocessed_img)) * 100)}\n")
 
     return fused_features
 
@@ -147,9 +138,7 @@ def visualize(real, gan):
     plt.show()
 
 
-
-
-# provide directory for real and gan 
+# provide directory for preprocessed real and gan images
 real_directory = "/Users/Danniel/Downloads/real_test"
 gan_directory = "/Users/Danniel/Downloads/gan_test"
 
@@ -160,10 +149,10 @@ real_data = get_data(real_directory)
 gan_data = get_data(gan_directory)
 
 
-# # train the data
+# train the data
 model = prepare_data(real_data, gan_data)
 
 
 # # save the model
-model_file = "/Users/Danniel/Downloads/faces.model"
+model_file = ""
 svm_save_model(model_file, model)

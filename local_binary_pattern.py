@@ -34,22 +34,3 @@ def lbp(image):
             lbp_values[i][j] = lbp_value
 
     return lbp_values
-
-# # #Load and preprocess the image as grayscale
-# image_path = '1.jpg'
-# preprocessed_image = preprocessing(image_path)
-
-# # # Calculate LBP values
-# lbp_values = lbp(preprocessed_image)
-
-# # # Display the LBP values as grayscale
-# plt.imshow(lbp_values, cmap="gray")
-# plt.title("LBP Values")
-# plt.show()
-
-# # # Display the LBP values
-# print('...')
-# print("Applying Local Binary Pattern:")
-# print('...')
-# print("LBP Value:")
-# print(lbp_values)

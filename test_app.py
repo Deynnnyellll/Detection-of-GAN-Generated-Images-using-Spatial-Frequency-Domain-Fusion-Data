@@ -20,7 +20,7 @@ def predict(directory):
 
 
     # load the model
-    model_file = "/Users/Danniel/Downloads/faces.txt"
+    model_file = "/Users/Danniel/Downloads/faces.model"
     loaded_model = svm_load_model(model_file)
 
     # preprocessing
@@ -63,19 +63,9 @@ def predict(directory):
 
 
     # predict the result
-    start_time = time.time()
+    print("\n\n-------------------THE MODEL IS PREDICTING----------------------------\n")
+    predicted_labels, _, _ = svm_predict([], feature_vector, loaded_model, '-q')
 
-    while True:
-        elapsed_time = time.time() - start_time
-        minutes, seconds = divmod(int(elapsed_time), 60)
-        hours, minutes = divmod(minutes, 60)
-        time_string = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
-        print(f"Elapsed time: {time_string}", end='\r', flush=True)
-
-        predicted_labels, _, _ = svm_predict([], feature_vector, loaded_model, '-q')
-
-        if predicted_labels is not None:
-            break
 
     print("------------------------------------------RESULT-----------------------------------\n")
     result = []
@@ -88,6 +78,6 @@ def predict(directory):
     print(result)
 
 #provide directory for testing dataset
-dir = "/Users/Danniel/Downloads/gan_test"
+dir = ""
 
 predict(dir)
