@@ -7,7 +7,6 @@ pip install -U libsvm-official
 
 import numpy as np
 from libsvm.svmutil import svm_problem, svm_parameter, svm_train, svm_save_model
-from preprocessing import preprocessing
 from discrete_wavelet_transform import dwt_2d
 from local_binary_pattern import lbp
 from test import concatenate_lbp_dwt
