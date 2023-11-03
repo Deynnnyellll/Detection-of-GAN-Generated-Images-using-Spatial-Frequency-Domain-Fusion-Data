@@ -302,11 +302,20 @@ class Ui_MainWindow(QMainWindow):
         self.uploadButton.clicked.connect(self.uploadImage)
         self.homeBar.clicked.connect(self.predict_result)
 
-        self.image_container = QtWidgets.QWidget(parent=self.centralwidget)
+        self.image_container = QScrollArea(self.centralwidget)
         self.image_container.setStyleSheet("background-color: transparent")
-        self.image_container.setGeometry(85, 111, 350, 420) 
+        self.image_container.setGeometry(85, 100, 350, 420)  # Adjust the size
+        self.image_container.setWidgetResizable(True)
 
-        self.image_grid_layout = QtWidgets.QGridLayout(self.image_container)
+        self.image_grid_layout = QtWidgets.QGridLayout()
+        self.image_grid_layout.setColumnMinimumWidth(0, 150)
+        self.image_grid_layout.setColumnMinimumWidth(1, 150)
+        self.image_grid_layout.setColumnMinimumWidth(2, 150)
+
+        container_widget = QtWidgets.QWidget()
+        container_widget.setLayout(self.image_grid_layout)
+        self.image_container.setWidget(container_widget)
+
 
 
         
@@ -315,33 +324,31 @@ class Ui_MainWindow(QMainWindow):
         home_dir = str(Path.home())
         fname, _ = QFileDialog.getOpenFileNames(self, 'Open file', home_dir)
 
-        self.image_container.show()
-        self.uploadButton.hide()
-
         if fname:
             self.image_container.show()
-
-            row, col = 0, 0
+            self.uploadButton.hide()
 
             for file in fname:
                 self.images.append(file)
 
                 pixmap = QPixmap(file)
-
                 pixmap = pixmap.scaled(150, 150)
 
                 label = QtWidgets.QLabel()
                 label.setPixmap(pixmap)
 
-            
+                # Calculate the row and column for the new label
+                row = len(self.images) // 3
+                col = len(self.images) % 3
 
+                # Add each label to a new row for every three images
                 self.image_grid_layout.addWidget(label, row, col)
 
-                col += 1
-                if col >= 3:
-                    col = 0
-                    row += 1
-
+            # Add an empty label for spacing
+            if len(self.images) % 3 != 0:
+                row += 1
+                for col in range(len(self.images) % 3, 3):
+                    self.image_grid_layout.addWidget(QtWidgets.QLabel(), row, col)
             print(self.images)
 
     def predict_result(self):
