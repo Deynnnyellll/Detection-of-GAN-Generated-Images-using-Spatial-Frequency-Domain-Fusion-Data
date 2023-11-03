@@ -304,21 +304,17 @@ class Ui_MainWindow(QMainWindow):
 
         self.image_container = QScrollArea(self.centralwidget)
         self.image_container.setStyleSheet("background-color: transparent")
-        self.image_container.setGeometry(85, 100, 350, 420)  # Adjust the size
+        self.image_container.setGeometry(85, 97, 370, 450)  # Adjust the size
         self.image_container.setWidgetResizable(True)
 
         self.image_grid_layout = QtWidgets.QGridLayout()
-        self.image_grid_layout.setColumnMinimumWidth(0, 150)
-        self.image_grid_layout.setColumnMinimumWidth(1, 150)
-        self.image_grid_layout.setColumnMinimumWidth(2, 150)
+        self.image_grid_layout.setColumnMinimumWidth(0, 0)  # Set the minimum width to 0 for the first column
+        self.image_grid_layout.setColumnMinimumWidth(1, 100)
+        self.image_grid_layout.setColumnMinimumWidth(2, 100)
 
         container_widget = QtWidgets.QWidget()
         container_widget.setLayout(self.image_grid_layout)
         self.image_container.setWidget(container_widget)
-
-
-
-        
 
     def uploadImage(self):
         home_dir = str(Path.home())
@@ -341,6 +337,10 @@ class Ui_MainWindow(QMainWindow):
                 row = len(self.images) // 3
                 col = len(self.images) % 3
 
+                if col == 0:
+                    # Only set the minimum width to 0 for the first column
+                    self.image_grid_layout.setColumnMinimumWidth(0, 0)
+
                 # Add each label to a new row for every three images
                 self.image_grid_layout.addWidget(label, row, col)
 
@@ -349,7 +349,7 @@ class Ui_MainWindow(QMainWindow):
                 row += 1
                 for col in range(len(self.images) % 3, 3):
                     self.image_grid_layout.addWidget(QtWidgets.QLabel(), row, col)
-            print(self.images)
+                    print(self.images)
 
     def predict_result(self):
         print("Clicked")
