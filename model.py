@@ -1,15 +1,11 @@
-from libsvm.svmutil import svm_load_model, svm_predict
+from libsvm.svmutil import svm_predict
 from preprocessing import preprocessing
 from discrete_wavelet_transform import dwt_2d
 from local_binary_pattern import lbp
 from feature_fusion import concatenate_lbp_dwt
 import cv2
 
-def predict(images):
-    # load the model
-    model_file = "/Users/Danniel/Downloads/faces_validate.model"
-    loaded_model = svm_load_model(model_file)
-
+def predict(images, loaded_model):
     # preprocessing
     preprocessed_img = []
     for i in images:
