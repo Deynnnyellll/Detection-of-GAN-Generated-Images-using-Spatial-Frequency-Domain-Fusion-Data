@@ -3,13 +3,20 @@ from preprocessing import preprocessing
 from discrete_wavelet_transform import dwt_2d
 from local_binary_pattern import lbp
 from feature_fusion import concatenate_lbp_dwt
-import cv2
 
 def predict(images, loaded_model):
     # preprocessing
     preprocessed_img = []
     for i in images:
         preprocessed_img.append(preprocessing(i))      
+
+
+    #  discrete wavelet transform
+    dwt_feature = []
+    print("\n\n-------------------DWT----------------------------\n")
+    for i in preprocessed_img:
+        dwt_feature.append(dwt_2d(i))
+        print(f"\n{len(dwt_feature)} out of {len(preprocessed_img)} images\nPercentage: {(float(len(dwt_feature)) / float(len(preprocessed_img)) * 100)}\n")
 
 
     # local binary pattern
@@ -21,12 +28,6 @@ def predict(images, loaded_model):
         lbp_feature.append(lbp(i))
         print(f"\n{len(lbp_feature)} out of {len(preprocessed_img)} images\nPercentage: {(float(len(lbp_feature)) / float(len(preprocessed_img)) * 100)}\n")
 
-    #  discrete wavelet transform
-    dwt_feature = []
-    print("\n\n-------------------DWT----------------------------\n")
-    for i in preprocessed_img:
-        dwt_feature.append(cv2.resize(dwt_2d(i), dsize=(512, 512)))
-        print(f"\n{len(dwt_feature)} out of {len(preprocessed_img)} images\nPercentage: {(float(len(dwt_feature)) / float(len(preprocessed_img)) * 100)}\n")
 
     # feature fusion
     fused_vector = []
