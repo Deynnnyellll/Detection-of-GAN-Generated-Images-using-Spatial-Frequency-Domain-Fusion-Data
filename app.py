@@ -3,12 +3,8 @@ from PyQt6.QtWidgets import (QFileDialog, QMainWindow, QScrollArea)
 from PyQt6.QtGui import QPixmap
 import sys
 from pathlib import Path
-from discrete_wavelet_transform import dwt_2d
-import cv2
-import matplotlib.pyplot as plt
-import numpy as np
-from preprocessing import preprocessing
 import os
+from model import predict
 
 class Ui_MainWindow(QMainWindow):
     def __init__(self):
@@ -197,6 +193,17 @@ class Ui_MainWindow(QMainWindow):
         self.eye3.setPixmap(QtGui.QPixmap("resources/eye3.png"))
         self.eye3.setScaledContents(True)
         self.eye3.setObjectName("eye3")
+
+        self.eye4 = QtWidgets.QLabel(parent=self.centralwidget)
+        self.eye4.setGeometry(QtCore.QRect(690, 300, 191, 211))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.eye4.setFont(font)
+        self.eye4.setText("")
+        self.eye4.setObjectName("eye4")
+        self.eye3.setStyleSheet("* {\ncolor: rgb(255, 255, 255)\n""}")
+
+
         self.aboutBar_2 = QtWidgets.QPushButton(parent=self.centralwidget)
         self.aboutBar_2.setGeometry(QtCore.QRect(130, 340, 261, 111))
         self.aboutBar_2.setStyleSheet("* {\n""background: transparent;\n""color: rgb(169,169,169)\n""}")
@@ -211,8 +218,6 @@ class Ui_MainWindow(QMainWindow):
         self.uploadLabel.setStyleSheet("* {\n""background: transparent;\n""color: rgb(255, 255, 255)\n""}")
 
         self.setWelcomePage()
-
-
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -249,6 +254,7 @@ class Ui_MainWindow(QMainWindow):
         self.eye3.hide()
         self.uploadLabel.hide()
         self.aboutBar_2.hide()
+        self.eye4.hide()
         self.getStarted.clicked.connect(self.setHomePage)
         self.aboutBar.clicked.connect(self.setAboutPage)
 
@@ -316,6 +322,10 @@ class Ui_MainWindow(QMainWindow):
         container_widget.setLayout(self.image_grid_layout)
         self.image_container.setWidget(container_widget)
 
+
+
+        
+
     def uploadImage(self):
         home_dir = str(Path.home())
         fname, _ = QFileDialog.getOpenFileNames(self, 'Open file', home_dir)
@@ -351,8 +361,12 @@ class Ui_MainWindow(QMainWindow):
                     self.image_grid_layout.addWidget(QtWidgets.QLabel(), row, col)
                     print(self.images)
 
+    # detect whether an image is gan or real
     def predict_result(self):
-        print("Clicked")
+        result =  predict(self.images)
+
+        self.eye4.setText(result[0])
+        self.eye4.show()
 
 
     def clear_image(self):
