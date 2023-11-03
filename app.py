@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 import os
 from model import predict
+from libsvm.svmutil import svm_load_model
 
 class Ui_MainWindow(QMainWindow):
     def __init__(self):
@@ -12,6 +13,10 @@ class Ui_MainWindow(QMainWindow):
 
         #Container for Real and Gan Images
         self.images = []
+
+        # load model
+        model_file = "/Users/Danniel/Downloads/faces_validate.model"
+        self.loaded_model = svm_load_model(model_file)
 
         QMainWindow().__init__(self)
         self.ui = MainWindow
@@ -363,7 +368,7 @@ class Ui_MainWindow(QMainWindow):
 
     # detect whether an image is gan or real
     def predict_result(self):
-        result =  predict(self.images)
+        result =  predict(self.images, self.loaded_model)
 
         self.eye4.setText(result[0])
         self.eye4.show()
@@ -375,6 +380,8 @@ class Ui_MainWindow(QMainWindow):
         self.image_container.hide()
 
         os.system('cls')
+
+        self.eye4.hide()
 
         msg = QtWidgets.QMessageBox(parent=self.centralwidget)
         msg.setText("Cleared")    

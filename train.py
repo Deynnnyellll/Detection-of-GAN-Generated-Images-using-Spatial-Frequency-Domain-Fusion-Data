@@ -26,6 +26,13 @@ def get_data(directory):
             img = cv2.imread(image, cv2.IMREAD_GRAYSCALE)
             preprocessed_img.append(img)
 
+    print("Preprocessed Images: ", len(preprocessed_img))        
+
+    return preprocessed_img
+
+
+
+def spatial_frequency_feature_fusion(images):
     # feature extraction
     print("Performing Feature Extraction")
     time.sleep(1)
@@ -33,7 +40,7 @@ def get_data(directory):
     # applying local binary pattern
     print("Applying Local Binary Pattern")
     lbp_img_features = []
-    for i in preprocessed_img:
+    for i in images:
         texture_features = lbp(i)
         print('\n\n')
         print(texture_features)
@@ -41,21 +48,21 @@ def get_data(directory):
 
         # store the features in a lbp_img_features list
         lbp_img_features.append(texture_features)
-        print(f"\n{len(lbp_img_features)} out of {len(preprocessed_img)} images\nPercentage: {(float(len(lbp_img_features)) / float(len(preprocessed_img)) * 100)}\n")
+        print(f"\n{len(lbp_img_features)} out of {len(images)} images\nPercentage: {(float(len(lbp_img_features)) / float(len(images)) * 100)}\n")
     print('\nLBP application finished\n\n')
     
     # applying discrete wavelet transform
     print("Applying DWT to Images")
 
     dwt_img_features = []
-    for i in preprocessed_img:
+    for i in images:
         freq_features = dwt_2d(i)
         print('\n\n')
         print(freq_features)
 
         # store the features in a dwt_img_features list
-        dwt_img_features.append(cv2.resize(freq_features, dsize=(512, 512)))
-        print(f"\n{len(dwt_img_features)} out of {len(preprocessed_img)} images\nPercentage: {(float(len(dwt_img_features)) / float(len(preprocessed_img)) * 100)}\n")
+        dwt_img_features.append(freq_features)
+        print(f"\n{len(dwt_img_features)} out of {len(images)} images\nPercentage: {(float(len(dwt_img_features)) / float(len(images)) * 100)}\n")
     print("\nDWT application finished\n\n")
 
 
@@ -65,10 +72,11 @@ def get_data(directory):
     for dwt_features, lbp_features in zip(dwt_img_features, lbp_img_features):
         feature_vector = concatenate_lbp_dwt(lbp_features, dwt_features)
         fused_features.append(feature_vector)
-        print(f"\n{len(fused_features)} out of {len(preprocessed_img)} images\nPercentage: {(float(len(fused_features)) / float(len(preprocessed_img)) * 100)}\n")
+        print(f"\n{len(fused_features)} out of {len(images)} images\nPercentage: {(float(len(fused_features)) / float(len(images)) * 100)}\n")
 
 
     return fused_features
+
 
 
 def prepare_data(real, gan):
@@ -80,9 +88,7 @@ def prepare_data(real, gan):
 
     # combine the labels and datasets
     dataset_labels = np.vstack((real_label, gan_label))
-    print(len(dataset_labels))
     datasets = np.vstack((real, gan))
-    print(datasets[0].shape)
 
     # reshape the labels and datasets for svm requirements
     datasets_final = []
@@ -92,18 +98,23 @@ def prepare_data(real, gan):
         datasets_final.append(flattened_feature)
     label_final = dataset_labels.reshape(dataset_labels.shape[0])
 
-    print(datasets_final[0])
+    print("Labels: ", len(label_final))
+    print("Datasets: ", len(datasets_final))
+
+    return label_final, datasets_final
 
 
 
+
+def train_model(label, datasets):
     print("----------------------Model Training--------------------------\n")
-    # initialize parameter
-    kernel_type = 2 #rbf (ginawa kong rbf muna same sa gan synthesized na study)
-    C = 0.5
+    # SVM parameter
+    kernel_type = 2
+    C = 1.0
 
     # check if length of datasets is equal to the length of labels
-    if len(label_final) == len(datasets_final):
-        prob = svm_problem(label_final, datasets_final)
+    if len(label) == len(datasets):
+        prob = svm_problem(label, datasets)
         validate = svm_parameter(f'-t {kernel_type} -c {C} -v 5')
         param = svm_parameter(f'-t {kernel_type} -c {C}')
         initial_accurary = svm_train(prob, validate)
@@ -112,10 +123,11 @@ def prepare_data(real, gan):
     
     else:
         print("Length of datasets and labels do not match\n")  
-        print("Length of Datasets: ", len(datasets_final))
-        print("Length of Labels: ", len(label_final))
+        print("Length of Datasets: ", len(datasets))
+        print("Length of Labels: ", len(label))
 
     return model
+
 
 
 def visualize(real, gan):
@@ -134,27 +146,3 @@ def visualize(real, gan):
 
     # Display the plot
     plt.show()
-
-
-# provide directory for preprocessed real and gan images
-real_directory = "/Users/Danniel/Downloads/preprocessed_real"
-gan_directory = "/Users/Danniel/Downloads/preprocessed_gan"
-
-
-
-# run data preparation
-real_data = get_data(real_directory)
-gan_data = get_data(gan_directory)
-
-
-# visualize
-visualize(real_data, gan_data)
-
-
-# train the data
-model = prepare_data(real_data, gan_data)
-
-
-# # save the model
-model_file = ""
-svm_save_model(model_file, model)

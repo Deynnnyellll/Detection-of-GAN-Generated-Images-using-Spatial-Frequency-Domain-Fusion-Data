@@ -4,6 +4,7 @@ as one of the feature extraction techniques
 '''
 
 import numpy as np
+import cv2
 
 # applying haar wavelet
 def haar_transform(matrix):
@@ -40,4 +41,4 @@ def dwt_2d(image):
       height //= 2
       width //= 2
 
-  return coefficients[0][3]
+  return cv2.resize(coefficients[0][3], dsize=(512, 512))
