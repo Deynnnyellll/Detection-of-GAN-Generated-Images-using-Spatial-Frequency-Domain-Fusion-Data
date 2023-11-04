@@ -115,9 +115,7 @@ def train_model(label, datasets):
     # check if length of datasets is equal to the length of labels
     if len(label) == len(datasets):
         prob = svm_problem(label, datasets)
-        validate = svm_parameter(f'-t {kernel_type} -c {C} -v 5')
-        param = svm_parameter(f'-t {kernel_type} -c {C}')
-        initial_accurary = svm_train(prob, validate)
+        param = svm_parameter(f'-t {kernel_type} -c {C} -b 1')
 
         model = svm_train(prob, param)
     
@@ -146,3 +144,5 @@ def visualize(real, gan):
 
     # Display the plot
     plt.show()
+
+    return mean1, mean2

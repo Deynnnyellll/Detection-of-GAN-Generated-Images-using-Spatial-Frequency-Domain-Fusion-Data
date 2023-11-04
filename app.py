@@ -368,7 +368,7 @@ class Ui_MainWindow(QMainWindow):
 
     # detect whether an image is gan or real
     def predict_result(self):
-        result =  predict(self.images, self.loaded_model)
+        result, real_prob, gan_prob =  predict(self.images, self.loaded_model)
 
         self.eye4.setText(result[0])
         self.eye4.show()
