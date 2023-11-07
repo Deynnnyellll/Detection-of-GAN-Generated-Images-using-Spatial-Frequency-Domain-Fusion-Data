@@ -1,5 +1,5 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
-from PyQt6.QtWidgets import (QFileDialog, QMainWindow, QScrollArea)
+from PyQt6.QtWidgets import (QFileDialog, QMainWindow, QScrollArea, QTableWidget, QTableWidgetItem)
 from PyQt6.QtGui import QPixmap
 import sys
 from pathlib import Path
@@ -388,7 +388,22 @@ class Ui_MainWindow(QMainWindow):
 
         print("Images: ", len(self.images))  
 
-        
+
+    def display_result(self):
+        result_table = QTableWidget()
+        result_table.setRowCount(len(results))
+        result_table.setColumnCount(3)
+        result_table.setHorizontalHeaderLabels(["Image Name", "Real Probability", "GAN Probability", "Prediction"])
+
+        for row, (image_name, real_prob, gan_prob, prediction) in enumerate(results):
+            result_table.setItem(row, 0, QTableWidgetItem(image_name))
+            result_table.setItem(row, 1, QTableWidgetItem(f"{real_prob:.2f}"))
+            result_table.setItem(row, 2, QTableWidgetItem(f"{gan_prob:.2f}"))
+            result_table.setItem(row, 3, QTableWidgetItem(prediction))
+
+        result_table.setHorizontalHeaderLabels(["Image Name", "Real Probability", "GAN Probability", "Prediction"])
+        result_table.resizeColumnsToContents()
+        result_table.show()
       
 
 
