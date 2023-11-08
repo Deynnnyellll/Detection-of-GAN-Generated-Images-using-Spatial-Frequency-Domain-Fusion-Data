@@ -46,19 +46,16 @@ def predict(images, loaded_model):
 
     # predict the result
     print("\n\n-------------------THE MODEL IS PREDICTING----------------------------\n")
-    predicted_labels, _, prob_estimates = svm_predict([], feature_vector, loaded_model, '-b 1')
+    predicted_labels, _, prob_estimates = svm_predict([], feature_vector, loaded_model, '-b 0')
 
 
 
     print("------------------------------------------RESULT-----------------------------------\n")
     result = []
     for i in predicted_labels:
-        real_prob = prob_estimates[0][0]
-        gan_prob = prob_estimates[0][1]
-        
         if i == 1.0:
             result.append("Real")
-        elif i == 0.0:
-            result.append("GAN")
+        else:
+            result.append("GAN")    
 
-    return result, real_prob, gan_prob
+    return result, prob_estimates
