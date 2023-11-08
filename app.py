@@ -6,9 +6,6 @@ from pathlib import Path
 import os
 from model import predict
 from libsvm.svmutil import svm_load_model
-from preprocessing import preprocessing
-from PIL import Image as im
-from PIL.ImageQt import ImageQt
 
 class Ui_MainWindow(QMainWindow):
     def __init__(self):
