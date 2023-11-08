@@ -46,7 +46,7 @@ def predict(images, loaded_model):
 
     # predict the result
     print("\n\n-------------------THE MODEL IS PREDICTING----------------------------\n")
-    predicted_labels, _, prob_estimates = svm_predict([], feature_vector, loaded_model, '-b 0')
+    predicted_labels, _, _ = svm_predict([], feature_vector, loaded_model, '-q')
 
 
 
@@ -58,4 +58,4 @@ def predict(images, loaded_model):
         else:
             result.append("GAN")    
 
-    return result, prob_estimates
+    return result
