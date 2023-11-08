@@ -6,6 +6,9 @@ from pathlib import Path
 import os
 from model import predict
 from libsvm.svmutil import svm_load_model
+from preprocessing import preprocessing
+from PIL import Image as im
+from PIL.ImageQt import ImageQt
 
 class Ui_MainWindow(QMainWindow):
     def __init__(self):
@@ -15,8 +18,8 @@ class Ui_MainWindow(QMainWindow):
         self.images = []
 
         # load model
-        model_file = "/Users/Danniel/Downloads/faces_validate.model"
-        self.loaded_model = svm_load_model(model_file)
+        # model_file = "/Users/Danniel/Downloads/faces_validate.model"
+        # self.loaded_model = svm_load_model(model_file)
 
         QMainWindow().__init__(self)
         self.ui = MainWindow
@@ -368,10 +371,11 @@ class Ui_MainWindow(QMainWindow):
 
     # detect whether an image is gan or real
     def predict_result(self):
-        result, real_prob, gan_prob =  predict(self.images, self.loaded_model)
+        self.display_pre_image()
 
-        self.eye4.setText(result[0])
-        self.eye4.show()
+        # result, prob_estimates =  predict(self.images, self.loaded_model)
+
+        # self.display_result()
 
 
     def clear_image(self):
@@ -390,6 +394,7 @@ class Ui_MainWindow(QMainWindow):
 
 
     def display_result(self):
+        results = []
         result_table = QTableWidget()
         result_table.setRowCount(len(results))
         result_table.setColumnCount(3)
@@ -404,6 +409,40 @@ class Ui_MainWindow(QMainWindow):
         result_table.setHorizontalHeaderLabels(["Image Name", "Real Probability", "GAN Probability", "Prediction"])
         result_table.resizeColumnsToContents()
         result_table.show()
+
+    def display_pre_image(self):
+        self.preprocessed_images = [preprocessing(images) for images in self.images]
+
+        images_final = [im.fromarray(image) for image in self.preprocessed_images]
+
+        
+        self.image_container.show()
+        self.uploadButton.hide()
+
+        for file in images_final:
+            pixmap = QPixmap.fromImage(file)
+            pixmap = pixmap.scaled(150, 150)
+
+            label = QtWidgets.QLabel()
+            label.setPixmap(pixmap)
+
+            # Calculate the row and column for the new label
+            row = len(images_final) // 3
+            col = len(images_final) % 3
+
+            if col == 0:
+                # Only set the minimum width to 0 for the first column
+                self.image_grid_layout.setColumnMinimumWidth(0, 0)
+
+            # Add each label to a new row for every three images
+            self.image_grid_layout.addWidget(label, row, col)
+
+        # Add an empty label for spacing
+        if len(images_final) % 3 != 0:
+            row += 1
+            for col in range(len(images_final) % 3, 3):
+                self.image_grid_layout.addWidget(QtWidgets.QLabel(), row, col)
+                print(images_final)
       
 
 
