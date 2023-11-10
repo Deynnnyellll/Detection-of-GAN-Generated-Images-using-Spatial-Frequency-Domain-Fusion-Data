@@ -6,6 +6,7 @@ from pathlib import Path
 import os
 from model import predict
 from libsvm.svmutil import svm_load_model
+import threading
 
 class Ui_MainWindow(QMainWindow):
     def __init__(self):
@@ -15,8 +16,12 @@ class Ui_MainWindow(QMainWindow):
         self.images = []
 
         # load model
-        # model_file = "/Users/Danniel/Downloads/faces_validate.model"
-        # self.loaded_model = svm_load_model(model_file)
+        model_file = "/Users/Danniel/Downloads/faces_validate.model"
+        self.loaded_model = svm_load_model(model_file)
+
+        # result and probability estimates
+        self.result = []
+        self.prob = []
 
         QMainWindow().__init__(self)
         self.ui = MainWindow
@@ -368,14 +373,27 @@ class Ui_MainWindow(QMainWindow):
     # detect whether an image is gan or real
     def predict_result(self):
         try:
+            print(self.images)
             if len(self.images) != 0:
-                result =  predict(self.images, self.loaded_model)
-                print(result)
-                self.display_result()
+                if self.loaded_model is None:
+                    print("No model loaded")
+                else:    
+                    def callback(result, likelihood):
+                        for prob in likelihood:
+                            self.prob.append(prob)
+                        print(self.result)
+
+                        for pred in result:
+                            self.result.append(pred)
+                        print(self.result) 
+
+                # Run the predict function in a separate thread
+                predict_thread = threading.Thread(target=predict, args=(self.images, self.loaded_model, callback))
+                predict_thread.start()
             else:
                 print("Error")
         except:
-            print("There is no model loaded")         
+            print("Something went wrong!")         
 
 
     def clear_image(self):
@@ -417,6 +435,11 @@ class Ui_MainWindow(QMainWindow):
 
         result_table.resizeColumnsToContents()
         result_table.show()
+
+    def load_model(model_dir, callback):
+        loaded_model = svm_load_model(model_dir)
+
+        return loaded_model   
       
 
 
