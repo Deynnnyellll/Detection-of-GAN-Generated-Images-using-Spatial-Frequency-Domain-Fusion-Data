@@ -15,8 +15,8 @@ class Ui_MainWindow(QMainWindow):
         self.images = []
 
         # load model
-        model_file = "/Users/Danniel/Downloads/faces_validate.model"
-        self.loaded_model = svm_load_model(model_file)
+        # model_file = "/Users/Danniel/Downloads/faces_validate.model"
+        # self.loaded_model = svm_load_model(model_file)
 
         QMainWindow().__init__(self)
         self.ui = MainWindow
@@ -367,11 +367,15 @@ class Ui_MainWindow(QMainWindow):
 
     # detect whether an image is gan or real
     def predict_result(self):
-        if len(self.images) != 0 and self.loaded_model is not None:
-            result =  predict(self.images, self.loaded_model)
-            print(result)
-        else:
-            print("Error")    
+        try:
+            if len(self.images) != 0:
+                result =  predict(self.images, self.loaded_model)
+                print(result)
+                self.display_result()
+            else:
+                print("Error")
+        except:
+            print("There is no model loaded")         
 
 
     def clear_image(self):
@@ -387,11 +391,23 @@ class Ui_MainWindow(QMainWindow):
 
 
     def display_result(self):
-        results = []
-        result_table = QTableWidget()
+        self.eye3.hide()
+        results = [
+            ["Image1.jpg", 0.85, 0.15, "Real"],
+            ["Image2.jpg", 0.32, 0.68, "GAN"],
+            ["Image3.jpg", 0.61, 0.39, "Real"],
+        ]
+
+        result_table = QTableWidget(self.centralwidget)
         result_table.setRowCount(len(results))
-        result_table.setColumnCount(3)
+        result_table.setColumnCount(4)
         result_table.setHorizontalHeaderLabels(["Image Name", "Real Probability", "GAN Probability", "Prediction"])
+        result_table.setStyleSheet("background-color: transparent")
+        result_table.move(600, 110)
+
+        result_table.horizontalHeader().setStyleSheet("background-color: transparent")
+        result_table.verticalHeader().setStyleSheet("background-color: transparent")
+
 
         for row, (image_name, real_prob, gan_prob, prediction) in enumerate(results):
             result_table.setItem(row, 0, QTableWidgetItem(image_name))
@@ -399,7 +415,6 @@ class Ui_MainWindow(QMainWindow):
             result_table.setItem(row, 2, QTableWidgetItem(f"{gan_prob:.2f}"))
             result_table.setItem(row, 3, QTableWidgetItem(prediction))
 
-        result_table.setHorizontalHeaderLabels(["Image Name", "Real Probability", "GAN Probability", "Prediction"])
         result_table.resizeColumnsToContents()
         result_table.show()
       

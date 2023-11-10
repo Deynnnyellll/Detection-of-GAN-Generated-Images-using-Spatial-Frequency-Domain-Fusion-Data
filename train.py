@@ -109,7 +109,7 @@ def prepare_data(real, gan):
 def train_model(label, datasets):
     print("----------------------Model Training--------------------------\n")
     # SVM parameter
-    kernel_type = 2
+    kernel_type = 0
     C = 1.0
 
     # check if length of datasets is equal to the length of labels
