@@ -39,4 +39,4 @@ def predict(images, loaded_model, callback):
         elif i == 0.0:
             result.append("GAN")
 
-    return predicted_labels, likelihood
+    return result, likelihood

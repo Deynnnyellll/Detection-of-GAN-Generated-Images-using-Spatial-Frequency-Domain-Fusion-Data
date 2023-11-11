@@ -17,7 +17,7 @@ class Ui_MainWindow(QMainWindow):
         self.images = []
 
         # load model
-        model_file = "/Users/Danniel/Downloads/faces_validate.model"
+        model_file = "/Users/Danniel/Downloads/faces_new.model"
         self.loaded_model = svm_load_model(model_file)
 
         # result and probability estimates
@@ -382,16 +382,16 @@ class Ui_MainWindow(QMainWindow):
                     def callback(result, likelihood):
                         for prob in likelihood:
                             self.prob.append(prob)
-                        print(self.result)
+                        print(self.prob)
 
                         for pred in result:
                             self.result.append(pred)
-                        print(self.result) 
                         messagebox.showinfo(message="Process Finished")  
 
                 # Run the predict function in a separate thread
                 predict_thread = threading.Thread(target=predict, args=(self.images, self.loaded_model, callback))
                 predict_thread.start()
+                print(self.result) 
             else:
                 print("Error")
         except:
