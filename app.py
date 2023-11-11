@@ -7,6 +7,7 @@ import os
 from model import predict
 from libsvm.svmutil import svm_load_model
 import threading
+from tkinter import messagebox
 
 class Ui_MainWindow(QMainWindow):
     def __init__(self):
@@ -386,6 +387,7 @@ class Ui_MainWindow(QMainWindow):
                         for pred in result:
                             self.result.append(pred)
                         print(self.result) 
+                        messagebox.showinfo(message="Process Finished")  
 
                 # Run the predict function in a separate thread
                 predict_thread = threading.Thread(target=predict, args=(self.images, self.loaded_model, callback))
@@ -393,7 +395,8 @@ class Ui_MainWindow(QMainWindow):
             else:
                 print("Error")
         except:
-            print("Something went wrong!")         
+            print("Something went wrong!")
+           
 
 
     def clear_image(self):
@@ -403,9 +406,11 @@ class Ui_MainWindow(QMainWindow):
             self.uploadButton.show()
             self.image_container.hide()
             os.system('cls')
-            print("Images: ", len(self.images)) 
+            # print("Images: ", len(self.images))
+            messagebox.showinfo(message=f"Images {len(self.images)}")
         else:
-            print("Images already cleared")    
+            # print("Images already cleared")
+            messagebox.showinfo(message="Images already cleared")
 
 
     def display_result(self):
@@ -436,10 +441,6 @@ class Ui_MainWindow(QMainWindow):
         result_table.resizeColumnsToContents()
         result_table.show()
 
-    def load_model(model_dir, callback):
-        loaded_model = svm_load_model(model_dir)
-
-        return loaded_model   
       
 
 

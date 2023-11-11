@@ -74,12 +74,6 @@ def spatial_frequency_feature_fusion(images):
         fused_features.append(feature_vector)
         print(f"\n{len(fused_features)} out of {len(images)} images\nPercentage: {(float(len(fused_features)) / float(len(images)) * 100)}\n")
 
-    for i in fused_features:
-        plt.imshow(i, cmap="gray")
-        plt.title("Concatenated Feature Vector")
-        plt.show()
-
-
     return fused_features
 
 
