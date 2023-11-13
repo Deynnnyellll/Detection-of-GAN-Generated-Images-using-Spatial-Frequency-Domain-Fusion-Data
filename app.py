@@ -393,26 +393,25 @@ class Ui_MainWindow(QMainWindow):
  
     # detect whether an image is gan or real    
     def predict_result(self): 
-        # try: 
-        if len(self.images) != 0: 
-            if self.loaded_model is None: 
-                print("No model loaded") 
-            else:  
-                threading1 = ReturnValueThread(target=predict, args=(self.images, self.loaded_model))
-                threading1.start()
-                result, likelihood = threading1.join()
+        try: 
+            if len(self.images) != 0: 
+                if self.loaded_model is None: 
+                    print("No model loaded") 
+                else:  
+                    threading1 = ReturnValueThread(target=predict, args=(self.images, self.loaded_model))
+                    threading1.start()
+                    result, likelihood = threading1.join()
+                    
+                    for prob, pred in zip(likelihood, result): 
+                        self.prob.append(prob)
+                        self.result.append(pred)
                 
-                for prob, pred in zip(likelihood, result): 
-                    self.prob.append(prob)
-                    self.result.append(pred)
-            
-            image_file = self.get_basename(self.images)
-            print(image_file) 
-        else: 
-            print("Error")
-        # except:
-        #     print("Something went wrong!")
-           
+                image_file = self.get_basename(self.images)
+                print(image_file) 
+            else: 
+                print("Error")
+        except Exception as e:
+            print(e)
 
 
     def clear_image(self):
