@@ -232,7 +232,7 @@ class Ui_MainWindow(QMainWindow):
 
         # notifications
         self.notif = QtWidgets.QLabel(parent=self.centralwidget)
-        self.notif.setGeometry(QtCore.QRect(855, 555, 150, 50))
+        self.notif.setGeometry(QtCore.QRect(855, 555, 150, 45))
         self.notif.setText("")
         self.notif.setPixmap(QtGui.QPixmap("resources/loading.png"))
         self.notif.setScaledContents(True)
@@ -332,6 +332,7 @@ class Ui_MainWindow(QMainWindow):
         self.eye3.show()
         self.uploadLabel.show()
         self.aboutBar_2.show()
+        self.homeBar.clicked.connect(self.setWelcomePage)
         self.uploadButton.clicked.connect(self.uploadImage)
 
         self.image_container = QScrollArea(self.centralwidget)
