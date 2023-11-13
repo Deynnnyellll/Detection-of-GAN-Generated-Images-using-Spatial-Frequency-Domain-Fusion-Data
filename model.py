@@ -4,7 +4,7 @@ from train import spatial_frequency_feature_fusion
 import numpy as np
 
 # test the model
-def predict(images, loaded_model, callback):
+def predict(images, loaded_model):
     # preprocessing
     preprocessed_img = []
     for i in images:

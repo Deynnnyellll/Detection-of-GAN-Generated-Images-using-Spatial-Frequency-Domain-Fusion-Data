@@ -6,8 +6,8 @@ from pathlib import Path
 import os
 from model import predict
 from libsvm.svmutil import svm_load_model
-import threading
 from tkinter import messagebox
+from custom import ReturnValueThread
 
 class Ui_MainWindow(QMainWindow):
     def __init__(self):
@@ -387,29 +387,31 @@ class Ui_MainWindow(QMainWindow):
                 for col in range(len(self.images) % 3, 3):
                     self.image_grid_layout.addWidget(QtWidgets.QLabel(), row, col)
 
-    # detect whether an image is gan or real
-    def predict_result(self):
-        try:
-            if len(self.images) != 0:
-                if self.loaded_model is None:
-                    print("No model loaded")
-                else:    
-                    def callback(result, likelihood):
-                        for prob in likelihood:
-                            self.prob.append(prob)
-                        print(self.prob)
-
-                        for pred in result:
-                            self.result.append(pred)
-                        messagebox.showinfo(message="Process Finished")  
-
-                # Run the predict function in a separate thread
-                predict_thread = threading.Thread(target=predict, args=(self.images, self.loaded_model, callback))
-                predict_thread.start()
-            else:
-                print("Error")
-        except:
-            print("Something went wrong!")
+    def get_basename(self, images):
+        images_basename = [os.path.basename(images) for images in self.images]
+        return images_basename
+ 
+    # detect whether an image is gan or real    
+    def predict_result(self): 
+        # try: 
+        if len(self.images) != 0: 
+            if self.loaded_model is None: 
+                print("No model loaded") 
+            else:  
+                threading1 = ReturnValueThread(target=predict, args=(self.images, self.loaded_model))
+                threading1.start()
+                result, likelihood = threading1.join()
+                
+                for prob, pred in zip(likelihood, result): 
+                    self.prob.append(prob)
+                    self.result.append(pred)
+            
+            image_file = self.get_basename(self.images)
+            print(image_file) 
+        else: 
+            print("Error")
+        # except:
+        #     print("Something went wrong!")
            
 
 
