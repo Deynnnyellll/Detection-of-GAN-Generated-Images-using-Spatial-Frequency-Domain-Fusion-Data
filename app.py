@@ -230,6 +230,14 @@ class Ui_MainWindow(QMainWindow):
         self.uploadLabel.setFont(font)
         self.uploadLabel.setStyleSheet("* {\n""background: transparent;\n""color: rgb(255, 255, 255)\n""}")
 
+        # notifications
+        self.notif = QtWidgets.QLabel(parent=self.centralwidget)
+        self.notif.setGeometry(QtCore.QRect(855, 555, 150, 50))
+        self.notif.setText("")
+        self.notif.setPixmap(QtGui.QPixmap("resources/loading.png"))
+        self.notif.setScaledContents(True)
+        self.notif.setObjectName("eye2")
+
         self.setWelcomePage()
 
         # select model
@@ -271,6 +279,7 @@ class Ui_MainWindow(QMainWindow):
         self.uploadLabel.hide()
         self.aboutBar_2.hide()
         self.eye4.hide()
+        self.notif.hide()
         self.getStarted.clicked.connect(self.setHomePage)
         self.aboutBar.clicked.connect(self.setAboutPage)
 
@@ -294,6 +303,7 @@ class Ui_MainWindow(QMainWindow):
         self.eye3.hide()
         self.aboutBar_2.hide()
         self.uploadLabel.hide()
+        self.notif.hide()
         MainWindow.setStyleSheet("#centralwidget {\n""background-image: url(resources/About Page.png);\n""}")
         self.homeBar.clicked.connect(self.setWelcomePage)
 
@@ -305,6 +315,7 @@ class Ui_MainWindow(QMainWindow):
         self.gallery2.hide()
         self.eye1.hide()
         self.eye2.hide()
+        self.notif.hide()
         self.imageLabel.show()
         self.resultLabel.show()
         self.aibutton.raise_()
@@ -445,13 +456,25 @@ class Ui_MainWindow(QMainWindow):
         
 
     def select_model(self):
-        home_dir = str(Path.home())
-        model_file, _ = QFileDialog.getOpenFileNames(self, 'Open file', home_dir)
+        self.notif.show()
+        try:
+            home_dir = str(Path.home())
+            model_file, _ = QFileDialog.getOpenFileNames(self, 'Open file', home_dir)
 
-        self.loaded_model = svm_load_model(model_file[0])
-    
-        messagebox.showinfo(message="Model Loaded Successfully")
+            if ".model" in model_file[0]:
+              
 
+                self.loaded_model = svm_load_model(model_file[0])
+
+                self.notif.hide()
+                messagebox.showinfo(message="Model Loaded Successfully")
+            else:
+                self.notif.hide()
+                messagebox.showinfo(message="Incompatible model file")
+                
+
+        except:
+            print("Something went wrong!")    
 
 
       
