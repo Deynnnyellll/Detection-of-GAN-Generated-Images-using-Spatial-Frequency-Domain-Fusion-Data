@@ -17,3 +17,4 @@ class ReturnValueThread(threading.Thread):
 
     def join(self, *args, **kwargs):
         super().join(*args, **kwargs)
+        return self.result
