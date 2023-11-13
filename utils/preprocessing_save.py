@@ -10,7 +10,7 @@ import time
 import sys
 
 # path of the folder "Detection-of-GAN-Generated-Images-using-Spatial-Frequency-Domain-Fusion-Data"
-sys.path.append("/Users/Danniel/Detection-of-GAN-Generated-Images-using-Spatial-Frequency-Domain-Fusion-Data")
+sys.path.append("/Users/User/Desktop/Detection-of-GAN-Generated-Images-using-Spatial-Frequency-Domain-Fusion-Data")
 from preprocessing import preprocessing
 
 def load_image(directory):

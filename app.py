@@ -17,8 +17,10 @@ class Ui_MainWindow(QMainWindow):
         self.images = []
 
         # load model
-        model_file = "/Users/Danniel/Downloads/faces_new.model"
-        self.loaded_model = svm_load_model(model_file)
+        # model_file = "/Users/User/Desktop/model/updatedobjects_new.model"
+        # self.loaded_model = svm_load_model(model_file)
+
+        self.loaded_model = None
 
         # result and probability estimates
         self.result = []
@@ -230,6 +232,9 @@ class Ui_MainWindow(QMainWindow):
 
         self.setWelcomePage()
 
+        # select model
+        self.modelBar.clicked.connect(self.select_model)
+
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -317,7 +322,6 @@ class Ui_MainWindow(QMainWindow):
         self.uploadLabel.show()
         self.aboutBar_2.show()
         self.uploadButton.clicked.connect(self.uploadImage)
-        self.homeBar.clicked.connect(self.predict_result)
 
         self.image_container = QScrollArea(self.centralwidget)
         self.image_container.setStyleSheet("background-color: transparent")
@@ -374,7 +378,6 @@ class Ui_MainWindow(QMainWindow):
     # detect whether an image is gan or real
     def predict_result(self):
         try:
-            print(self.images)
             if len(self.images) != 0:
                 if self.loaded_model is None:
                     print("No model loaded")
@@ -391,7 +394,6 @@ class Ui_MainWindow(QMainWindow):
                 # Run the predict function in a separate thread
                 predict_thread = threading.Thread(target=predict, args=(self.images, self.loaded_model, callback))
                 predict_thread.start()
-                print(self.result) 
             else:
                 print("Error")
         except:
@@ -440,6 +442,17 @@ class Ui_MainWindow(QMainWindow):
 
         result_table.resizeColumnsToContents()
         result_table.show()
+        
+
+    def select_model(self):
+        home_dir = str(Path.home())
+        model_file, _ = QFileDialog.getOpenFileNames(self, 'Open file', home_dir)
+
+        self.loaded_model = svm_load_model(model_file[0])
+    
+        messagebox.showinfo(message="Model Loaded Successfully")
+
+
 
       
 
