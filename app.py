@@ -16,10 +16,7 @@ class Ui_MainWindow(QMainWindow):
         #Container for Real and Gan Images
         self.images = []
 
-        # load model
-        # model_file = "/Users/User/Desktop/model/updatedobjects_new.model"
-        # self.loaded_model = svm_load_model(model_file)
-
+        # initialize value of model
         self.loaded_model = None
 
         # result and probability estimates
@@ -407,7 +404,9 @@ class Ui_MainWindow(QMainWindow):
                         self.result.append(pred)
                 
                 image_file = self.get_basename(self.images)
-                print(image_file) 
+                print(image_file)
+                print(self.prob)
+                print(self.result)
             else: 
                 print("Error")
         except Exception as e:
@@ -423,6 +422,16 @@ class Ui_MainWindow(QMainWindow):
             os.system('cls')
             # print("Images: ", len(self.images))
             messagebox.showinfo(message=f"Images {len(self.images)}")
+            real_prob = []
+            gan_prob = []
+            i = 0
+            for probability in self.prob:
+                print(probability)
+                real_prob.append(probability[0])
+                gan_prob.append(probability[1])
+
+            print(real_prob)
+            print(gan_prob)    
         else:
             # print("Images already cleared")
             messagebox.showinfo(message="Images already cleared")
@@ -430,6 +439,7 @@ class Ui_MainWindow(QMainWindow):
 
     def display_result(self):
         self.eye3.hide()
+            
         results = [
             ["Image1.jpg", 0.85, 0.15, "Real"],
             ["Image2.jpg", 0.32, 0.68, "GAN"],
