@@ -407,10 +407,12 @@ class Ui_MainWindow(QMainWindow):
                 print(image_file)
                 print(self.prob)
                 print(self.result)
+                self.display_result()
             else: 
                 print("Error")
         except Exception as e:
             print(e)
+            
 
 
     def clear_image(self):
@@ -436,36 +438,29 @@ class Ui_MainWindow(QMainWindow):
             # print("Images already cleared")
             messagebox.showinfo(message="Images already cleared")
 
-
     def display_result(self):
-        self.eye3.hide()
-            
-        results = [
-            ["Image1.jpg", 0.85, 0.15, "Real"],
-            ["Image2.jpg", 0.32, 0.68, "GAN"],
-            ["Image3.jpg", 0.61, 0.39, "Real"],
-        ]
+        if len(self.result) > 0:
+            result_table = QTableWidget(self.centralwidget)
+            result_table.setRowCount(len(self.result))
+            result_table.setColumnCount(3)
+            result_table.setHorizontalHeaderLabels(["Image Name", "Probability", "Prediction"])
+            result_table.setStyleSheet("background-color: transparent")
+            result_table.move(600, 110)
 
-        result_table = QTableWidget(self.centralwidget)
-        result_table.setRowCount(len(results))
-        result_table.setColumnCount(4)
-        result_table.setHorizontalHeaderLabels(["Image Name", "Real Probability", "GAN Probability", "Prediction"])
-        result_table.setStyleSheet("background-color: transparent")
-        result_table.move(600, 110)
+            result_table.horizontalHeader().setStyleSheet("background-color: transparent")
+            result_table.verticalHeader().setStyleSheet("background-color: transparent")
 
-        result_table.horizontalHeader().setStyleSheet("background-color: transparent")
-        result_table.verticalHeader().setStyleSheet("background-color: transparent")
+            for row, (image_name, prediction, probability) in enumerate(zip(self.get_basename(self.images), self.result, self.prob)):
+                result_table.setItem(row, 0, QTableWidgetItem(image_name))
+                result_table.setItem(row, 1, QTableWidgetItem(f"{max(probability):.2f}"))
+                result_table.setItem(row, 2, QTableWidgetItem(prediction))
+                
 
+            result_table.resizeColumnsToContents()
+            result_table.show()
 
-        for row, (image_name, real_prob, gan_prob, prediction) in enumerate(results):
-            result_table.setItem(row, 0, QTableWidgetItem(image_name))
-            result_table.setItem(row, 1, QTableWidgetItem(f"{real_prob:.2f}"))
-            result_table.setItem(row, 2, QTableWidgetItem(f"{gan_prob:.2f}"))
-            result_table.setItem(row, 3, QTableWidgetItem(prediction))
-
-        result_table.resizeColumnsToContents()
-        result_table.show()
-        
+        else:
+            messagebox.showinfo(message="No results to display. Please predict results first.")
 
     def select_model(self):
         self.notif.show()
