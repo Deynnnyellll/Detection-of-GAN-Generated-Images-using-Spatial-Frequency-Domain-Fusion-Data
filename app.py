@@ -445,8 +445,7 @@ class Ui_MainWindow(QMainWindow):
             result_table.setColumnCount(4)
             result_table.setHorizontalHeaderLabels(["Image Name", "Real Probability", "GAN Probability", "Prediction"])
             result_table.setStyleSheet("background-color: transparent")
-            result_table.move(600, 110)
-
+            result_table.setGeometry(550, 105, 380, 500)  # Adjust the size
             result_table.horizontalHeader().setStyleSheet("background-color: transparent")
             result_table.verticalHeader().setStyleSheet("background-color: transparent")
 
@@ -456,6 +455,7 @@ class Ui_MainWindow(QMainWindow):
                 result_table.setItem(row, 2, QTableWidgetItem(f"{probability[1]:.2f}"))  # GAN Probability
                 result_table.setItem(row, 3, QTableWidgetItem(prediction))
 
+            self.eye3.hide()
             result_table.resizeColumnsToContents()
             result_table.show()
 
