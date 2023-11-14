@@ -442,8 +442,8 @@ class Ui_MainWindow(QMainWindow):
         if len(self.result) > 0:
             result_table = QTableWidget(self.centralwidget)
             result_table.setRowCount(len(self.result))
-            result_table.setColumnCount(3)
-            result_table.setHorizontalHeaderLabels(["Image Name", "Probability", "Prediction"])
+            result_table.setColumnCount(4)
+            result_table.setHorizontalHeaderLabels(["Image Name", "Real Probability", "GAN Probability", "Prediction"])
             result_table.setStyleSheet("background-color: transparent")
             result_table.move(600, 110)
 
@@ -452,15 +452,17 @@ class Ui_MainWindow(QMainWindow):
 
             for row, (image_name, prediction, probability) in enumerate(zip(self.get_basename(self.images), self.result, self.prob)):
                 result_table.setItem(row, 0, QTableWidgetItem(image_name))
-                result_table.setItem(row, 1, QTableWidgetItem(f"{max(probability):.2f}"))
-                result_table.setItem(row, 2, QTableWidgetItem(prediction))
-                
+                result_table.setItem(row, 1, QTableWidgetItem(f"{probability[0]:.2f}"))  # Real Probability
+                result_table.setItem(row, 2, QTableWidgetItem(f"{probability[1]:.2f}"))  # GAN Probability
+                result_table.setItem(row, 3, QTableWidgetItem(prediction))
 
             result_table.resizeColumnsToContents()
             result_table.show()
 
         else:
             messagebox.showinfo(message="No results to display. Please predict results first.")
+
+
 
     def select_model(self):
         self.notif.show()
