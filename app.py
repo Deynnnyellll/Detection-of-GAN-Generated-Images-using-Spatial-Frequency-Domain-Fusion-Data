@@ -356,7 +356,9 @@ class Ui_MainWindow(QMainWindow):
         self.loadingDetection = QtWidgets.QPushButton(parent=self.Wrapper)
         self.loadingDetection.setGeometry(QtCore.QRect(90, 270, 261, 111))
         self.loadingDetection.setStyleSheet("* {\n""background: transparent;\n""color: rgb(169,169,169);\n"" font-size: 16px;}")
-        self.loadingDetection.setObjectName("aboutBar_2")
+        self.loadingDetection.setObjectName("loading")
+        self.loadingDetection.setText("Hi")
+        self.loadingDetection.show()
 
 
     def uploadImage(self):
@@ -369,12 +371,8 @@ class Ui_MainWindow(QMainWindow):
             self.aboutBar_2.hide()
 
             for idx, file in enumerate(fname):
-                if idx > 1:
-                    pixmap = QPixmap(file)
-                    pixmap = pixmap.scaled(110, 110)
-                else:
-                    pixmap = QPixmap(file)
-                    pixmap = pixmap.scaled(340, 400)
+                pixmap = QPixmap(file)
+                pixmap = pixmap.scaled(110, 110)
 
                 label = QtWidgets.QLabel()
                 label.setPixmap(pixmap)
@@ -403,11 +401,12 @@ class Ui_MainWindow(QMainWindow):
 
     # detect whether an image is gan or real    
     def predict_result(self): 
+        self.loadingDetection.setText("Detecting Image")
         try: 
             if len(self.images) != 0: 
                 if self.loaded_model is None: 
                     print("No model loaded") 
-                else:  
+                else:    
                     threading1 = ReturnValueThread(target=linear_predict_proba, args=(self.images, self.loaded_model))
                     threading1.start()
                     result, likelihood = threading1.join()
@@ -415,12 +414,6 @@ class Ui_MainWindow(QMainWindow):
                     for prob, pred in zip(likelihood, result): 
                         self.prob.append(prob)
                         self.result.append(pred)
-                
-                self.loadingDetection.show()
-                if len(self.images) == 1:
-                    self.loadingDetection.setText("Detecting 1 Image")
-                else:
-                    self.loadingDetection.setText(f"Detecting {len(self.images)} Images")    
                 image_file = self.get_basename(self.images)
                 self.display_result()
             else: 
@@ -469,7 +462,7 @@ class Ui_MainWindow(QMainWindow):
             self.result_table.setColumnCount(4)
             self.result_table.setHorizontalHeaderLabels(["Image Name", "Real Probability", "GAN Probability", "Prediction"])
             self.result_table.setStyleSheet("background-color: transparent")
-            self.result_table.setGeometry(550, 105, 380, 320)  # Adjust the size x, y, width, height
+            self.result_table.setGeometry(560, 115, 363, 320)  # Adjust the size x, y, width, height
             self.result_table.horizontalHeader().setStyleSheet("background-color: transparent")
             self.result_table.verticalHeader().setStyleSheet("background-color: transparent")
 
@@ -508,11 +501,11 @@ class Ui_MainWindow(QMainWindow):
 
 
     def select_model(self):
+        self.notif.show()
         try:
             home_dir = str(Path.home())
             model_file, _ = QFileDialog.getOpenFileNames(self, 'Open file', home_dir)
             if ".model" in model_file[0]:
-                self.notif.show()
                 self.loaded_model = load_model(model_file[0])
                 self.notif.hide()
                 messagebox.showinfo(message="Model Loaded Successfully")

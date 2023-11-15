@@ -30,6 +30,6 @@ def preprocessing(image):
 
     # Noise reduction using Gaussian Blurring
     print("\nApplying Gaussian Noise Reduction")
-    noise_reduced_img = cv2.GaussianBlur(final_image, (5, 5), 0)
+    noise_reduced_img = cv2.GaussianBlur(final_image, (3, 3), 0)
 
     return noise_reduced_img
