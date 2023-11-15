@@ -1,5 +1,5 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
-from PyQt6.QtWidgets import (QFileDialog, QMainWindow, QScrollArea, QTableWidget, QTableWidgetItem)
+from PyQt6.QtWidgets import (QFileDialog, QLabel,QMainWindow, QScrollArea, QTableWidget, QTableWidgetItem)
 from PyQt6.QtGui import QPixmap
 import sys
 from pathlib import Path
@@ -23,8 +23,16 @@ class Ui_MainWindow(QMainWindow):
         self.result = []
         self.prob = []
 
+     
+
+        self.setupUi(self)
+
         QMainWindow().__init__(self)
         self.ui = MainWindow
+
+         # Labels for statistics
+      
+        
         self.setupUi(self)
 
     def setupUi(self, MainWindow):
@@ -417,7 +425,7 @@ class Ui_MainWindow(QMainWindow):
     def clear_image(self):
         if len(self.images) != 0:
             self.images.clear()
-        
+           
             self.uploadButton.show()
             self.image_container.hide()
             os.system('cls')
@@ -427,14 +435,25 @@ class Ui_MainWindow(QMainWindow):
             # print("Images already cleared")
             messagebox.showinfo(message="Images already cleared")
 
+    
     def display_result(self):
+        # Create labels for statistics
+        processed_images_label = QtWidgets.QLabel(parent=self.centralwidget)
+        processed_images_label.setGeometry(680, 440, 200, 20)
+        detected_real_label = QtWidgets.QLabel(parent=self.centralwidget)
+        detected_real_label.setGeometry(680, 455, 200, 20)
+        detected_gan_label = QtWidgets.QLabel(parent=self.centralwidget)
+        detected_gan_label.setGeometry(680, 470, 200, 20)
+
         if len(self.result) > 0:
             result_table = QTableWidget(self.centralwidget)
             result_table.setRowCount(len(self.result))
             result_table.setColumnCount(4)
             result_table.setHorizontalHeaderLabels(["Image Name", "Real Probability", "GAN Probability", "Prediction"])
             result_table.setStyleSheet("background-color: transparent")
-            result_table.setGeometry(560, 105, 365, 500)  # Adjust the size
+            result_table.setGeometry(550, 105, 380, 320)  # Adjust the size x, y, width, height
+            result_table.horizontalHeader().setStyleSheet("background-color: transparent")
+            result_table.verticalHeader().setStyleSheet("background-color: transparent")
 
             for row, (image_name, prediction, probability) in enumerate(zip(self.get_basename(self.images), self.result, self.prob)):
                 result_table.setItem(row, 0, QTableWidgetItem(image_name))
@@ -446,8 +465,30 @@ class Ui_MainWindow(QMainWindow):
             result_table.resizeColumnsToContents()
             result_table.show()
 
+            # Update labels for statistics
+            processed_images_text = f"Processed Images: {len(self.images)}"
+            detected_real_text = f"Detected Real: {self.result.count('Real')}"
+            detected_gan_text = f"Detected GAN: {self.result.count('GAN')}"
+
+            processed_images_label.setText(processed_images_text)
+            detected_real_label.setText(detected_real_text)
+            detected_gan_label.setText(detected_gan_text)
+             # Show labels
+            processed_images_label.show()
+            detected_real_label.show()
+            detected_gan_label.show()
+
+
         else:
+            processed_images_label.setText("Processed Images: 0")
+            detected_real_label.setText("Detected Real: 0")
+            detected_gan_label.setText("Detected GAN: 0")
+             # Show labels
+            processed_images_label.show()
+            detected_real_label.show()
+            detected_gan_label.show()
             messagebox.showinfo(message="No results to display. Please predict results first.")
+
 
 
     def select_model(self):
