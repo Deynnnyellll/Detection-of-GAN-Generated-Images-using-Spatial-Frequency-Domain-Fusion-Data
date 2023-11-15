@@ -1,5 +1,5 @@
 from preprocessing import preprocessing
-from libsvm.svmutil import svm_predict
+from liblinear.liblinearutil import predict
 from train import spatial_frequency_feature_fusion
 import numpy as np
 
@@ -24,7 +24,7 @@ def predict(images, loaded_model):
 
     # predict the result
     print("\n\n-------------------THE MODEL IS PREDICTING----------------------------\n")
-    predicted_labels, _, likelihood = svm_predict([], feature_vector, loaded_model, '-b 1')
+    predicted_labels, _, _ = predict([], feature_vector, loaded_model)
 
 
     print("------------------------------------------RESULT-----------------------------------\n")
@@ -35,4 +35,4 @@ def predict(images, loaded_model):
         elif i == 0.0:
             result.append("GAN")
 
-    return result, likelihood
+    return result

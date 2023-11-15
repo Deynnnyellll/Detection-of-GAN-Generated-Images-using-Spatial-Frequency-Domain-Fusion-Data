@@ -35,8 +35,6 @@ def get_data(directory):
 def spatial_frequency_feature_fusion(images):
     # feature extraction
     print("Performing Feature Extraction")
-    time.sleep(1)
-
     # applying local binary pattern
     print("Applying Local Binary Pattern")
     lbp_img_features = []
@@ -90,11 +88,8 @@ def prepare_data(real, gan):
     datasets = np.vstack((real, gan))
 
     # reshape the labels and datasets for svm requirements
-    datasets_final = []
-
-    for i in datasets:
-        flattened_feature = i.flatten()
-        datasets_final.append(flattened_feature)
+    datasets_final = [i.flatten() for i in datasets]
+    
     label_final = dataset_labels.reshape(dataset_labels.shape[0])
 
     print("Labels: ", len(label_final))

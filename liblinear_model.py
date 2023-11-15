@@ -1,10 +1,11 @@
 from preprocessing import preprocessing
-from libsvm.svmutil import svm_predict
+from liblinear.liblinearutil import predict
 from train import spatial_frequency_feature_fusion
 import numpy as np
+from prob_estimates import calculate_prob
 
 # test the model
-def predict(images, loaded_model):
+def linear_predict(images, loaded_model):
     # preprocessing
     preprocessed_img = [preprocessing(i) for i in images] 
 
@@ -18,13 +19,11 @@ def predict(images, loaded_model):
     true_label = labels.reshape(labels.shape[0])
 
 
-    print(len(feature_vector))
-    print(len(true_label))
-
-
     # predict the result
     print("\n\n-------------------THE MODEL IS PREDICTING----------------------------\n")
-    predicted_labels, _, likelihood = svm_predict([], feature_vector, loaded_model, '-b 1')
+    predicted_labels, _, prob_estimates = predict([], feature_vector, loaded_model)
+
+    likelihood = [calculate_prob(i[0]) for i in prob_estimates]
 
 
     print("------------------------------------------RESULT-----------------------------------\n")

@@ -4,8 +4,8 @@ from PyQt6.QtGui import QPixmap
 import sys
 from pathlib import Path
 import os
-from model import predict
-from libsvm.svmutil import svm_load_model
+from liblinear_model import linear_predict
+from liblinear.liblinearutil import load_model
 from tkinter import messagebox
 from custom import ReturnValueThread
 
@@ -348,8 +348,6 @@ class Ui_MainWindow(QMainWindow):
         self.image_container.setWidget(container_widget)
 
 
- 
-
     def uploadImage(self):
         home_dir = str(Path.home())
         fname, _ = QFileDialog.getOpenFileNames(self, 'Open file', home_dir)
@@ -388,6 +386,7 @@ class Ui_MainWindow(QMainWindow):
         images_basename = [os.path.basename(images) for images in self.images]
         return images_basename
  
+
     # detect whether an image is gan or real    
     def predict_result(self): 
         try: 
@@ -395,7 +394,7 @@ class Ui_MainWindow(QMainWindow):
                 if self.loaded_model is None: 
                     print("No model loaded") 
                 else:  
-                    threading1 = ReturnValueThread(target=predict, args=(self.images, self.loaded_model))
+                    threading1 = ReturnValueThread(target=linear_predict, args=(self.images, self.loaded_model))
                     threading1.start()
                     result, likelihood = threading1.join()
                     
@@ -423,17 +422,7 @@ class Ui_MainWindow(QMainWindow):
             self.image_container.hide()
             os.system('cls')
             # print("Images: ", len(self.images))
-            messagebox.showinfo(message=f"Images {len(self.images)}")
-            real_prob = []
-            gan_prob = []
-            i = 0
-            for probability in self.prob:
-                print(probability)
-                real_prob.append(probability[0])
-                gan_prob.append(probability[1])
-
-            print(real_prob)
-            print(gan_prob)    
+            messagebox.showinfo(message=f"Images {len(self.images)}")   
         else:
             # print("Images already cleared")
             messagebox.showinfo(message="Images already cleared")
@@ -445,14 +434,12 @@ class Ui_MainWindow(QMainWindow):
             result_table.setColumnCount(4)
             result_table.setHorizontalHeaderLabels(["Image Name", "Real Probability", "GAN Probability", "Prediction"])
             result_table.setStyleSheet("background-color: transparent")
-            result_table.setGeometry(550, 105, 380, 500)  # Adjust the size
-            result_table.horizontalHeader().setStyleSheet("background-color: transparent")
-            result_table.verticalHeader().setStyleSheet("background-color: transparent")
+            result_table.setGeometry(560, 105, 365, 500)  # Adjust the size
 
             for row, (image_name, prediction, probability) in enumerate(zip(self.get_basename(self.images), self.result, self.prob)):
                 result_table.setItem(row, 0, QTableWidgetItem(image_name))
-                result_table.setItem(row, 1, QTableWidgetItem(f"{probability[0]:.2f}"))  # Real Probability
-                result_table.setItem(row, 2, QTableWidgetItem(f"{probability[1]:.2f}"))  # GAN Probability
+                result_table.setItem(row, 1, QTableWidgetItem(f"{(probability[0] * 100):.2f}"))
+                result_table.setItem(row, 2, QTableWidgetItem(f"{(probability[1] * 100):.2f}"))
                 result_table.setItem(row, 3, QTableWidgetItem(prediction))
 
             self.eye3.hide()
@@ -463,25 +450,18 @@ class Ui_MainWindow(QMainWindow):
             messagebox.showinfo(message="No results to display. Please predict results first.")
 
 
-
     def select_model(self):
-        self.notif.show()
         try:
             home_dir = str(Path.home())
             model_file, _ = QFileDialog.getOpenFileNames(self, 'Open file', home_dir)
-
             if ".model" in model_file[0]:
-              
-
-                self.loaded_model = svm_load_model(model_file[0])
-
+                self.notif.show()
+                self.loaded_model = load_model(model_file[0])
                 self.notif.hide()
                 messagebox.showinfo(message="Model Loaded Successfully")
             else:
                 self.notif.hide()
                 messagebox.showinfo(message="Incompatible model file")
-                
-
         except:
             print("Something went wrong!")    
 
