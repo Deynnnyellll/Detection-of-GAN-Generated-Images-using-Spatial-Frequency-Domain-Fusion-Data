@@ -23,8 +23,6 @@ class Ui_MainWindow(QMainWindow):
         self.result = []
         self.prob = []
 
-     
-
         self.setupUi(self)
 
         QMainWindow().__init__(self)
