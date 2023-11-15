@@ -450,9 +450,9 @@ class Ui_MainWindow(QMainWindow):
     def display_result(self):
         # Create labels for statistics
         processed_images_label = QtWidgets.QLabel(parent=self.centralwidget)
-        processed_images_label.setGeometry(680, 450, 200, 20)
+        processed_images_label.setGeometry(680, 440, 200, 20)
         detected_real_label = QtWidgets.QLabel(parent=self.centralwidget)
-        detected_real_label.setGeometry(680, 460, 200, 20)
+        detected_real_label.setGeometry(680, 455, 200, 20)
         detected_gan_label = QtWidgets.QLabel(parent=self.centralwidget)
         detected_gan_label.setGeometry(680, 470, 200, 20)
 
@@ -462,7 +462,7 @@ class Ui_MainWindow(QMainWindow):
             result_table.setColumnCount(4)
             result_table.setHorizontalHeaderLabels(["Image Name", "Real Probability", "GAN Probability", "Prediction"])
             result_table.setStyleSheet("background-color: transparent")
-            result_table.setGeometry(550, 105, 380, 350)  # Adjust the size x, y, width, height
+            result_table.setGeometry(550, 105, 380, 320)  # Adjust the size x, y, width, height
             result_table.horizontalHeader().setStyleSheet("background-color: transparent")
             result_table.verticalHeader().setStyleSheet("background-color: transparent")
 
