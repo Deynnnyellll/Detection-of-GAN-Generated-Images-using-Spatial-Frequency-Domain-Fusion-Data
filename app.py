@@ -4,7 +4,7 @@ from PyQt6.QtGui import QPixmap
 import sys
 from pathlib import Path
 import os
-from liblinear_model import linear_predict
+from liblinear_model import linear_predict, linear_predict_proba
 from liblinear.liblinearutil import load_model
 from tkinter import messagebox
 from custom import ReturnValueThread
@@ -400,7 +400,7 @@ class Ui_MainWindow(QMainWindow):
                 if self.loaded_model is None: 
                     print("No model loaded") 
                 else:  
-                    threading1 = ReturnValueThread(target=linear_predict, args=(self.images, self.loaded_model))
+                    threading1 = ReturnValueThread(target=linear_predict_proba, args=(self.images, self.loaded_model))
                     threading1.start()
                     result, likelihood = threading1.join()
                     
@@ -455,8 +455,8 @@ class Ui_MainWindow(QMainWindow):
 
             for row, (image_name, prediction, probability) in enumerate(zip(self.get_basename(self.images), self.result, self.prob)):
                 result_table.setItem(row, 0, QTableWidgetItem(image_name))
-                result_table.setItem(row, 1, QTableWidgetItem(f"{(probability[0] * 100):.2f}"))
-                result_table.setItem(row, 2, QTableWidgetItem(f"{(probability[1] * 100):.2f}"))
+                result_table.setItem(row, 1, QTableWidgetItem(f"{(probability[1] * 100):.2f}"))
+                result_table.setItem(row, 2, QTableWidgetItem(f"{(probability[0] * 100):.2f}"))
                 result_table.setItem(row, 3, QTableWidgetItem(prediction))
 
             self.eye3.hide()
