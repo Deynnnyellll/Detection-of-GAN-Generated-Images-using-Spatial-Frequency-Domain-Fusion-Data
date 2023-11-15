@@ -340,7 +340,7 @@ class Ui_MainWindow(QMainWindow):
 
         self.image_container = QScrollArea(self.centralwidget)
         self.image_container.setStyleSheet("background-color: transparent")
-        self.image_container.setGeometry(90, 110, 350, 420)  # Adjust the size
+        self.image_container.setGeometry(82, 110, 360, 420)  # Adjust the size
         self.image_container.setWidgetResizable(True)
 
         self.image_grid_layout = QtWidgets.QGridLayout()
@@ -353,6 +353,11 @@ class Ui_MainWindow(QMainWindow):
         container_widget.setLayout(self.image_grid_layout)
         self.image_container.setWidget(container_widget)
 
+        self.loadingDetection = QtWidgets.QPushButton(parent=self.Wrapper)
+        self.loadingDetection.setGeometry(QtCore.QRect(90, 270, 261, 111))
+        self.loadingDetection.setStyleSheet("* {\n""background: transparent;\n""color: rgb(169,169,169);\n"" font-size: 16px;}")
+        self.loadingDetection.setObjectName("aboutBar_2")
+
 
     def uploadImage(self):
         home_dir = str(Path.home())
@@ -361,32 +366,35 @@ class Ui_MainWindow(QMainWindow):
         if fname:
             self.image_container.show()
             self.uploadButton.hide()
+            self.aboutBar_2.hide()
 
-            for file in fname:
-                self.images.append(file)
-
-                pixmap = QPixmap(file)
-                pixmap = pixmap.scaled(150, 150)
+            for idx, file in enumerate(fname):
+                if idx > 1:
+                    pixmap = QPixmap(file)
+                    pixmap = pixmap.scaled(110, 110)
+                else:
+                    pixmap = QPixmap(file)
+                    pixmap = pixmap.scaled(340, 400)
 
                 label = QtWidgets.QLabel()
                 label.setPixmap(pixmap)
 
-                # Calculate the row and column for the new label
-                row = len(self.images) // 3
-                col = len(self.images) % 3
+                self.images.append(file)
+
+                row = idx // 3
+                col = idx % 3
 
                 if col == 0:
-                    # Only set the minimum width to 0 for the first column
                     self.image_grid_layout.setColumnMinimumWidth(0, 0)
 
-                # Add each label to a new row for every three images
                 self.image_grid_layout.addWidget(label, row, col)
 
-            # Add an empty label for spacing
-            if len(self.images) % 3 != 0:
+            if (len(fname) - 1) % 3 != 0:
                 row += 1
-                for col in range(len(self.images) % 3, 3):
+                for col in range((len(fname) - 1) % 3, 3):
                     self.image_grid_layout.addWidget(QtWidgets.QLabel(), row, col)
+
+                self.image_grid_layout.setContentsMargins(0, 2, 0, 2)        
 
     def get_basename(self, images):
         images_basename = [os.path.basename(images) for images in self.images]
@@ -408,84 +416,94 @@ class Ui_MainWindow(QMainWindow):
                         self.prob.append(prob)
                         self.result.append(pred)
                 
+                self.loadingDetection.show()
+                if len(self.images) == 1:
+                    self.loadingDetection.setText("Detecting 1 Image")
+                else:
+                    self.loadingDetection.setText(f"Detecting {len(self.images)} Images")    
                 image_file = self.get_basename(self.images)
-                print(image_file)
-                print(self.prob)
-                print(self.result)
                 self.display_result()
             else: 
                 print("Error")
         except Exception as e:
             print(e)
-            
-
 
     def clear_image(self):
         if len(self.images) != 0:
             self.images.clear()
+            self.loadingDetection.hide()
+
+            try:
+                self.result_table.hide()
+                self.processed_images_label.hide()
+                self.detected_real_label.hide()
+                self.detected_gan_label.hide()
+            except:
+                print("Something went wrong!") 
            
             self.uploadButton.show()
             self.image_container.hide()
+            self.aboutBar_2.show()
             os.system('cls')
-            # print("Images: ", len(self.images))
             messagebox.showinfo(message=f"Images {len(self.images)}")   
         else:
-            # print("Images already cleared")
             messagebox.showinfo(message="Images already cleared")
 
-    
     def display_result(self):
+        self.loadingDetection.hide()
         # Create labels for statistics
-        processed_images_label = QtWidgets.QLabel(parent=self.centralwidget)
-        processed_images_label.setGeometry(680, 440, 200, 20)
-        detected_real_label = QtWidgets.QLabel(parent=self.centralwidget)
-        detected_real_label.setGeometry(680, 455, 200, 20)
-        detected_gan_label = QtWidgets.QLabel(parent=self.centralwidget)
-        detected_gan_label.setGeometry(680, 470, 200, 20)
+        self.processed_images_label = QtWidgets.QLabel(parent=self.centralwidget)
+        self.processed_images_label.setGeometry(670, 440, 200, 20)
+        self.detected_real_label = QtWidgets.QLabel(parent=self.centralwidget)
+        self.detected_real_label.setGeometry(670, 455, 200, 20)
+        self.detected_gan_label = QtWidgets.QLabel(parent=self.centralwidget)
+        self.detected_gan_label.setGeometry(670, 470, 200, 20)
+
+        self.processed_images_label.setStyleSheet("color:white; font-size: 11pt")
+        self.detected_real_label.setStyleSheet("color:white; font-size: 11pt")
+        self.detected_gan_label.setStyleSheet("color:white; font-size: 11pt")  
 
         if len(self.result) > 0:
-            result_table = QTableWidget(self.centralwidget)
-            result_table.setRowCount(len(self.result))
-            result_table.setColumnCount(4)
-            result_table.setHorizontalHeaderLabels(["Image Name", "Real Probability", "GAN Probability", "Prediction"])
-            result_table.setStyleSheet("background-color: transparent")
-            result_table.setGeometry(550, 105, 380, 320)  # Adjust the size x, y, width, height
-            result_table.horizontalHeader().setStyleSheet("background-color: transparent")
-            result_table.verticalHeader().setStyleSheet("background-color: transparent")
+            self.result_table = QTableWidget(self.centralwidget)
+            self.result_table.setRowCount(len(self.result))
+            self.result_table.setColumnCount(4)
+            self.result_table.setHorizontalHeaderLabels(["Image Name", "Real Probability", "GAN Probability", "Prediction"])
+            self.result_table.setStyleSheet("background-color: transparent")
+            self.result_table.setGeometry(550, 105, 380, 320)  # Adjust the size x, y, width, height
+            self.result_table.horizontalHeader().setStyleSheet("background-color: transparent")
+            self.result_table.verticalHeader().setStyleSheet("background-color: transparent")
 
             for row, (image_name, prediction, probability) in enumerate(zip(self.get_basename(self.images), self.result, self.prob)):
-                result_table.setItem(row, 0, QTableWidgetItem(image_name))
-                result_table.setItem(row, 1, QTableWidgetItem(f"{(probability[1] * 100):.2f}"))
-                result_table.setItem(row, 2, QTableWidgetItem(f"{(probability[0] * 100):.2f}"))
-                result_table.setItem(row, 3, QTableWidgetItem(prediction))
+                self.result_table.setItem(row, 0, QTableWidgetItem(image_name))
+                self.result_table.setItem(row, 1, QTableWidgetItem(f"{(probability[1] * 100):.2f}"))
+                self.result_table.setItem(row, 2, QTableWidgetItem(f"{(probability[0] * 100):.2f}"))
+                self.result_table.setItem(row, 3, QTableWidgetItem(prediction))
 
             self.eye3.hide()
-            result_table.resizeColumnsToContents()
-            result_table.show()
+            self.result_table.resizeColumnsToContents()
+            self.result_table.show()
 
             # Update labels for statistics
-            processed_images_text = f"Processed Images: {len(self.images)}"
-            detected_real_text = f"Detected Real: {self.result.count('Real')}"
-            detected_gan_text = f"Detected GAN: {self.result.count('GAN')}"
+            self.processed_images_text = f"Processed Images: {len(self.images)}"
+            self.detected_real_text = f"Detected Real: {self.result.count('Real')}"
+            self.detected_gan_text = f"Detected GAN: {self.result.count('GAN')}"
 
-            processed_images_label.setText(processed_images_text)
-            detected_real_label.setText(detected_real_text)
-            detected_gan_label.setText(detected_gan_text)
-             # Show labels
-            processed_images_label.show()
-            detected_real_label.show()
-            detected_gan_label.show()
-
-
+            self.processed_images_label.setText(self.processed_images_text)
+            self.detected_real_label.setText(self.detected_real_text)
+            self.detected_gan_label.setText(self.detected_gan_text)
+            # Show labels
+            self.processed_images_label.show()
+            self.detected_real_label.show()
+            self.detected_gan_label.show()
         else:
-            processed_images_label.setText("Processed Images: 0")
-            detected_real_label.setText("Detected Real: 0")
-            detected_gan_label.setText("Detected GAN: 0")
-             # Show labels
-            processed_images_label.show()
-            detected_real_label.show()
-            detected_gan_label.show()
-            messagebox.showinfo(message="No results to display. Please predict results first.")
+            self.processed_images_label.setText("Processed Images: 0")
+            self.detected_real_label.setText("Detected Real: 0")
+            self.detected_gan_label.setText("Detected GAN: 0")
+            # Show labels
+            self.processed_images_label.show()
+            self.detected_real_label.show()
+            self.detected_gan_label.show()
+            messagebox.showinfo(message="No results to display. Please predict results first.") 
 
 
 
@@ -504,8 +522,6 @@ class Ui_MainWindow(QMainWindow):
         except:
             print("Something went wrong!")    
 
-
-      
 
 
 if __name__ == "__main__":
