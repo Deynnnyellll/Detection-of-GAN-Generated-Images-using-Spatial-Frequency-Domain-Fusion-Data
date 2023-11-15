@@ -3,10 +3,12 @@ This code is for training GAN-Generated Images and Real Images
 
 you need to install this package by running this command:
 pip install -U libsvm-official
+pip install liblinear-official
 '''
 
 import numpy as np
-from libsvm.svmutil import svm_problem, svm_parameter, svm_train, svm_save_model
+from libsvm.svmutil import svm_problem, svm_parameter, svm_train
+from liblinear.liblinearutil import problem, parameter, train
 from discrete_wavelet_transform import dwt_2d
 from local_binary_pattern import lbp
 from feature_fusion import concatenate_lbp_dwt
@@ -101,7 +103,7 @@ def prepare_data(real, gan):
 
 
 def train_model(label, datasets, C):
-    print("----------------------Model Training--------------------------\n")
+    print("----------------------Model Training in LibSVM--------------------------\n")
     # SVM parameter
     kernel_type = 0
 
@@ -124,6 +126,28 @@ def train_model(label, datasets, C):
 
     return model
 
+
+def train_linear_model(label, datasets, C):
+    print("----------------------Model Training in Liblinear--------------------------\n")
+
+    # check if length of datasets is equal to the length of labels
+    if len(label) == len(datasets):
+        prob = problem(label, datasets)
+        validate = parameter(f'-s 0 -c {C} -v 5')
+        param = parameter(f'-s 0 -c {C}')
+
+        validation = train(prob, validate)
+
+        print(validation)
+
+        model = train(prob, param)
+    
+    else:
+        print("Length of datasets and labels do not match\n")  
+        print("Length of Datasets: ", len(datasets))
+        print("Length of Labels: ", len(label))
+
+    return model
 
 
 def visualize(real, gan):
