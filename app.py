@@ -42,7 +42,7 @@ class Ui_MainWindow(QMainWindow):
 
         #Get Started Button
         self.getStarted = QtWidgets.QPushButton(parent=self.centralwidget)
-        self.getStarted.setGeometry(QtCore.QRect(440, 190, 121, 51))
+        self.getStarted.setGeometry(QtCore.QRect(440, 330, 121, 51))
         self.getStarted.setStyleSheet("* {\n""background: transparent;\n""}")
         self.getStarted.setText("")
         icon = QtGui.QIcon()
@@ -251,8 +251,8 @@ class Ui_MainWindow(QMainWindow):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.logoName.setText(_translate("MainWindow", "Logo/App Name"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "illuscan"))
+        self.logoName.setText(_translate("MainWindow", "illuscan"))
         self.homeBar.setText(_translate("MainWindow", "Home"))
         self.datasetBar.setText(_translate("MainWindow", "Dataset"))
         self.modelBar.setText(_translate("MainWindow", "Model"))
@@ -260,14 +260,14 @@ class Ui_MainWindow(QMainWindow):
         self.aboutBar.setText(_translate("MainWindow", "About"))
 
     def setWelcomePage(self):
-        MainWindow.setStyleSheet("#centralwidget {\n""background-image: url(resources/Get Started.jpg);\n""}")
-        self.icon.show()
+        MainWindow.setStyleSheet("#centralwidget {\n""background-image: url(resources/Home page.png);\n""}")
+        self.icon.hide()
         self.getStarted.show()
-        self.title.show()
-        self.gallery1.show()
-        self.gallery2.show()
-        self.eye1.show()
-        self.eye2.show()
+        self.title.hide()
+        self.gallery1.hide()
+        self.gallery2.hide()
+        self.eye1.hide()
+        self.eye2.hide()
         self.aboutBar.clicked.connect(self.setAboutPage)
         self.imageLabel.hide()
         self.resultLabel.hide()
@@ -284,16 +284,18 @@ class Ui_MainWindow(QMainWindow):
         self.eye4.hide()
         self.notif.hide()
         self.getStarted.clicked.connect(self.setHomePage)
+        #MainWindow.setStyleSheet("#centralwidget {\n""background-image: url(resources/Get Started.jpg);\n""}")
         self.aboutBar.clicked.connect(self.setAboutPage)
 
     def setAboutPage(self):
-        self.icon.hide()
+        MainWindow.setStyleSheet("#centralwidget {\n""background-image: url(resources/Get Started.jpg);\n""}")
+        self.icon.show()
         self.getStarted.hide()
-        self.title.hide()
-        self.gallery1.hide()
-        self.gallery2.hide()
-        self.eye1.hide()
-        self.eye2.hide()
+        self.title.show()
+        self.gallery1.show()
+        self.gallery2.show()
+        self.eye1.show()
+        self.eye2.show()
         self.imageLabel.hide()
         self.resultLabel.hide()
         self.aibutton.hide()
@@ -307,10 +309,12 @@ class Ui_MainWindow(QMainWindow):
         self.aboutBar_2.hide()
         self.uploadLabel.hide()
         self.notif.hide()
-        MainWindow.setStyleSheet("#centralwidget {\n""background-image: url(resources/About Page.png);\n""}")
         self.homeBar.clicked.connect(self.setWelcomePage)
 
     def setHomePage(self):
+        MainWindow.setStyleSheet("#centralwidget {\n""background-image: url(resources/Get Started.jpg);\n""}")
+        self.icon.hide()
+        self.getStarted.hide()
         self.icon.hide()
         self.getStarted.hide()
         self.title.hide()
