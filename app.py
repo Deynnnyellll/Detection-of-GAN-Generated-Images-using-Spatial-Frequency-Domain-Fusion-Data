@@ -4,10 +4,11 @@ from PyQt6.QtGui import QPixmap
 import sys
 from pathlib import Path
 import os
-from liblinear_model import linear_predict, linear_predict_proba
+from liblinear_model import linear_predict, linear_predict_proba, adapt
 from liblinear.liblinearutil import load_model
 from tkinter import messagebox
 from custom import ReturnValueThread
+import numpy as np
 
 class Ui_MainWindow(QMainWindow):
     def __init__(self):
@@ -22,6 +23,9 @@ class Ui_MainWindow(QMainWindow):
         # result and probability estimates
         self.result = []
         self.prob = []
+
+        # true labels
+        self.true_labels = []
 
         self.setupUi(self)
 
@@ -392,10 +396,11 @@ class Ui_MainWindow(QMainWindow):
                 for col in range((len(fname) - 1) % 3, 3):
                     self.image_grid_layout.addWidget(QtWidgets.QLabel(), row, col)
 
-                self.image_grid_layout.setContentsMargins(0, 2, 0, 2)        
+                self.image_grid_layout.setContentsMargins(0, 2, 0, 2)  
 
     def get_basename(self, images):
         images_basename = [os.path.basename(images) for images in self.images]
+
         return images_basename
  
 
@@ -409,12 +414,17 @@ class Ui_MainWindow(QMainWindow):
                 else:    
                     threading1 = ReturnValueThread(target=linear_predict_proba, args=(self.images, self.loaded_model))
                     threading1.start()
-                    result, likelihood = threading1.join()
+                    feature_vector, result, likelihood = threading1.join()
                     
                     for prob, pred in zip(likelihood, result): 
                         self.prob.append(prob)
                         self.result.append(pred)
                 image_file = self.get_basename(self.images)
+                true_labels = [np.ones(1) if "real" in labels else np.zeros(1) for labels in image_file]
+                true_labels = np.vstack(true_labels)
+                print(len(feature_vector), len(true_labels))
+
+                self.loaded_model = adapt(true_labels, feature_vector, self.loaded_model)
                 self.display_result()
             else: 
                 print("Error")
@@ -508,7 +518,8 @@ class Ui_MainWindow(QMainWindow):
             if ".model" in model_file[0]:
                 self.loaded_model = load_model(model_file[0])
                 self.notif.hide()
-                messagebox.showinfo(message="Model Loaded Successfully")
+                messagebox.showinfo(message=f"Model Loaded Successfully")
+                print(model_file)
             else:
                 self.notif.hide()
                 messagebox.showinfo(message="Incompatible model file")

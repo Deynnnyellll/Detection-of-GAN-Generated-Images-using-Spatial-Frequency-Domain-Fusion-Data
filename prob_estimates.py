@@ -18,7 +18,7 @@ def calculate_prob(decision_value):
 
 # prob estimates implementation using calibrated classifier
 def get_prob(data):
-    with open("/Users/Danniel/Downloads/Model/calibrated_classifier.pkl", 'rb') as model_file:
+    with open("/Users/Danniel/Downloads/Model/platt_scale_validate_faces.pkl", 'rb') as model_file:
         clf = pickle.load(model_file)
 
     try:

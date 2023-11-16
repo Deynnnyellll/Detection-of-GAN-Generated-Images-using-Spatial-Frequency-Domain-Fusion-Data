@@ -133,8 +133,8 @@ def train_linear_model(label, datasets, C):
     # check if length of datasets is equal to the length of labels
     if len(label) == len(datasets):
         prob = problem(label, datasets)
-        validate = parameter(f'-s 0 -c {C} -v 5')
-        param = parameter(f'-s 0 -c {C}')
+        validate = parameter(f'-s 1 -c {C} -v 5 -B 1')
+        param = parameter(f'-s 1 -c {C} -B 1')
 
         validation = train(prob, validate)
 

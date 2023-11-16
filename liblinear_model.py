@@ -1,5 +1,5 @@
 from preprocessing import preprocessing
-from liblinear.liblinearutil import predict
+from liblinear.liblinearutil import problem, parameter, train, predict
 from train import spatial_frequency_feature_fusion
 import numpy as np
 from prob_estimates import calculate_prob, get_prob
@@ -62,7 +62,7 @@ def linear_predict_proba(images, loaded_model):
     try:
         # predict the result
         print("\n\n-------------------THE MODEL IS PREDICTING----------------------------\n")
-        predicted_labels, _, prob_estimates = predict([], feature_vector, loaded_model)
+        predicted_labels, _, _ = predict([], feature_vector, loaded_model)
         likelihood = get_prob(feature_vector)
 
 
@@ -73,6 +73,16 @@ def linear_predict_proba(images, loaded_model):
                 result.append("Real")
             elif i == 0.0:
                 result.append("GAN")
-        return result, likelihood
+        return feature_vector, result, likelihood
     except Exception as e:
         print(e)        
+
+# application of incremental learning
+def adapt(true_labels, feature_vector, model_file):
+    # initialize problem and param
+    prob = problem(true_labels, feature_vector)
+    param = parameter(f'-s 1 -c 1 -B 1 -i {model_file}')
+
+    model = train(problem, param)
+
+    return model        
