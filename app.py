@@ -442,6 +442,8 @@ class Ui_MainWindow(QMainWindow):
                     pass
         except RuntimeError:
             print(RuntimeError)
+        finally:
+            self.loadingDetection.hide()
             
 
     def clear_image(self):
