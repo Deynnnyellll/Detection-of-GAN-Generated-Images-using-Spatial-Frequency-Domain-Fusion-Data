@@ -29,7 +29,7 @@ def linear_predict(images, loaded_model):
         likelihood = [calculate_prob(i[0]) for i in prob_estimates]
 
 
-        print("------------------------------------------RESULT-----------------------------------\n")
+        print("------------------------------------------DISPLAYING THE RESULT-----------------------------------\n")
         result = []
         for i in predicted_labels:
             if i == 1.0:
@@ -37,7 +37,7 @@ def linear_predict(images, loaded_model):
             elif i == 0.0:
                 result.append("GAN")
 
-        return result, likelihood
+        return feature_vector, result, likelihood
     except Exception as e:
         print(e)
 
@@ -58,31 +58,31 @@ def linear_predict_proba(images, loaded_model):
     labels = np.ones((len(feature_vector), 1)) 
     true_label = labels.reshape(labels.shape[0])
 
-
     try:
         # predict the result
         print("\n\n-------------------THE MODEL IS PREDICTING----------------------------\n")
         predicted_labels, _, _ = predict([], feature_vector, loaded_model)
         likelihood = get_prob(feature_vector)
 
-
-        print("------------------------------------------RESULT-----------------------------------\n")
+        print("------------------------------------------DISPLAYING THE RESULT-----------------------------------\n")
         result = []
         for i in predicted_labels:
             if i == 1.0:
                 result.append("Real")
             elif i == 0.0:
-                result.append("GAN")
+                result.append("GAN")     
         return feature_vector, result, likelihood
     except Exception as e:
         print(e)        
 
 # application of incremental learning
-def adapt(true_labels, feature_vector, model_file):
-    # initialize problem and param
-    prob = problem(true_labels, feature_vector)
-    param = parameter(f'-s 1 -c 1 -B 1 -i {model_file}')
+def adapt(labels, feature_vector, model_file): 
+    try:
+        # reshape true labels
+        true_label = labels.reshape(labels.shape[0])
 
-    model = train(problem, param)
-
-    return model        
+        # initialize problem and param
+        model = train(true_label, feature_vector, f'-s 1 -c 1 -B 1 -i {model_file}')
+        return model
+    except:
+        print("Does not support incremental learning")    

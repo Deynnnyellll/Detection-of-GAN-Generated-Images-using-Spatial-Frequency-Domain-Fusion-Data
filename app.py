@@ -9,6 +9,7 @@ from liblinear.liblinearutil import load_model
 from tkinter import messagebox
 from custom import ReturnValueThread
 import numpy as np
+import traceback
 
 class Ui_MainWindow(QMainWindow):
     def __init__(self):
@@ -27,14 +28,11 @@ class Ui_MainWindow(QMainWindow):
         # true labels
         self.true_labels = []
 
-        self.setupUi(self)
+        # temporary file
+        self.temp = []
 
         QMainWindow().__init__(self)
         self.ui = MainWindow
-
-         # Labels for statistics
-      
-        
         self.setupUi(self)
 
     def setupUi(self, MainWindow):
@@ -416,7 +414,7 @@ class Ui_MainWindow(QMainWindow):
                 if self.loaded_model is None: 
                     print("No model loaded") 
                 else:    
-                    threading1 = ReturnValueThread(target=linear_predict_proba, args=(self.images, self.loaded_model))
+                    threading1 = ReturnValueThread(target=linear_predict, args=(self.images, self.loaded_model))
                     threading1.start()
                     feature_vector, result, likelihood = threading1.join()
                     
@@ -424,23 +422,40 @@ class Ui_MainWindow(QMainWindow):
                         self.prob.append(prob)
                         self.result.append(pred)
                 image_file = self.get_basename(self.images)
-                true_labels = [np.ones(1) if "real" in labels else np.zeros(1) for labels in image_file]
-                true_labels = np.vstack(true_labels)
-                print(len(feature_vector), len(true_labels))
+                true_labels = np.array([np.ones(1) if "real" in labels else np.zeros(1) for labels in image_file])
+                true_labels = np.vstack(true_labels).reshape(-1, 1)
+                item_exists = all(item in self.temp for item in self.images)
 
-                self.loaded_model = adapt(true_labels, feature_vector, self.loaded_model)
-                self.display_result()
+                try:
+                    if item_exists != True:
+                        self.loaded_model = adapt(true_labels, feature_vector, self.model_file[0])
+                        self.display_result()
+                        
+                        # store trained images in temporary list to avoid repeating of incremental learning with the same features
+                        for i in self.images:
+                            self.temp.append(i)
+                except:
+                    pass
             else: 
                 print("Error")
-        except Exception as e:
-            print(e)
+        except ZeroDivisionError:
+            print(traceback.format_exc())
 
     def clear_image(self):
         if len(self.images) != 0:
             self.images.clear()
+            self.result.clear()
+            self.eye3.show()
             self.loadingDetection.hide()
 
             try:
+                self.result_table.setRowCount(0)
+                self.result_table.clearContents()
+
+                # Clear the image labels from the layout
+                for i in reversed(range(self.image_grid_layout.count())):
+                    self.image_grid_layout.itemAt(i).widget().setParent(None)
+
                 self.result_table.hide()
                 self.processed_images_label.hide()
                 self.detected_real_label.hide()
@@ -513,17 +528,17 @@ class Ui_MainWindow(QMainWindow):
             messagebox.showinfo(message="No results to display. Please predict results first.") 
 
 
-
+    # function to select model
     def select_model(self):
         self.notif.show()
         try:
             home_dir = str(Path.home())
-            model_file, _ = QFileDialog.getOpenFileNames(self, 'Open file', home_dir)
-            if ".model" in model_file[0]:
-                self.loaded_model = load_model(model_file[0])
+            self.model_file, _ = QFileDialog.getOpenFileNames(self, 'Open file', home_dir)
+            if ".model" in self.model_file[0]:
+                self.loaded_model = load_model(self.model_file[0])
                 self.notif.hide()
                 messagebox.showinfo(message=f"Model Loaded Successfully")
-                print(model_file)
+                print(self.model_file)
             else:
                 self.notif.hide()
                 messagebox.showinfo(message="Incompatible model file")
