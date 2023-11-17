@@ -1,5 +1,5 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
-from PyQt6.QtWidgets import (QFileDialog, QLabel,QMainWindow, QScrollArea, QTableWidget, QTableWidgetItem)
+from PyQt6.QtWidgets import (QFileDialog, QLabel, QMainWindow, QApplication, QScrollArea, QTableWidget, QTableWidgetItem)
 from PyQt6.QtGui import QPixmap
 import sys
 from pathlib import Path
@@ -9,6 +9,8 @@ from liblinear.liblinearutil import load_model
 from tkinter import messagebox
 from custom import ReturnValueThread
 import numpy as np
+from PyQt6.QtCore import QTimer
+
 
 class Ui_MainWindow(QMainWindow):
     def __init__(self):
@@ -359,13 +361,12 @@ class Ui_MainWindow(QMainWindow):
         container_widget.setLayout(self.image_grid_layout)
         self.image_container.setWidget(container_widget)
 
-        self.loadingDetection = QtWidgets.QPushButton(parent=self.Wrapper)
-        self.loadingDetection.setGeometry(QtCore.QRect(90, 270, 261, 111))
+        self.loadingDetection = QtWidgets.QLabel(parent=self.Wrapper)
+        self.loadingDetection.setGeometry(QtCore.QRect(160, 270, 261, 111))
         self.loadingDetection.setStyleSheet("* {\n""background: transparent;\n""color: rgb(169,169,169);\n"" font-size: 16px;}")
         self.loadingDetection.setObjectName("loading")
-        self.loadingDetection.setText("")
-        self.loadingDetection.show()
-
+        self.loadingDetection.setText("Detecting Image")
+        
 
     def uploadImage(self):
         home_dir = str(Path.home())
@@ -408,17 +409,19 @@ class Ui_MainWindow(QMainWindow):
 
     # detect whether an image is gan or real    
     def predict_result(self): 
-        self.loadingDetection.setText("Detecting Image")
         try: 
             if len(self.images) != 0: 
                 if self.loaded_model is None: 
                     print("No model loaded") 
                 else:
+                    self.loadingDetection.show()  # Show the label before processing starts
+                    QApplication.processEvents()# Show the label before processing starts
                     feature_vector, result, likelihood = linear_predict(self.images, self.loaded_model)
-                    
+
                     for prob, pred in zip(likelihood, result): 
                         self.prob.append(prob)
                         self.result.append(pred)
+                    QApplication.processEvents() 
                 image_file = self.get_basename(self.images)
                 true_labels = np.array([np.ones(1) if "real" in labels else np.zeros(1) for labels in image_file])
                 true_labels = np.vstack(true_labels).reshape(-1, 1)
@@ -429,16 +432,16 @@ class Ui_MainWindow(QMainWindow):
                         print(self.type)
                         self.loaded_model, self.clf = adapt(true_labels, feature_vector, self.model_file[0], self.type)
                         self.display_result()
-                            
+
                         # store trained images in temporary list to avoid repeating of incremental learning with the same features
                         for i in self.images:
                             self.temp.append(i)
                     else:
                         self.display_result()           
                 except:
-                    print("Error")
-        except:
-            print("Something went wrong!")
+                    pass
+        except RuntimeError:
+            print(RuntimeError)
             
 
     def clear_image(self):
@@ -472,7 +475,7 @@ class Ui_MainWindow(QMainWindow):
             messagebox.showinfo(message="Images already cleared")
 
     def display_result(self):
-        self.loadingDetection.hide()
+        
         # Create labels for statistics
         self.processed_images_label = QtWidgets.QLabel(parent=self.centralwidget)
         self.processed_images_label.setGeometry(670, 440, 200, 20)
