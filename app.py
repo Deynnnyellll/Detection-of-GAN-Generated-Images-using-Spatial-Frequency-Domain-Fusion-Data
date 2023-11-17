@@ -9,7 +9,6 @@ from liblinear.liblinearutil import load_model
 from tkinter import messagebox
 from custom import ReturnValueThread
 import numpy as np
-import traceback
 
 class Ui_MainWindow(QMainWindow):
     def __init__(self):
@@ -363,7 +362,7 @@ class Ui_MainWindow(QMainWindow):
         self.loadingDetection.setGeometry(QtCore.QRect(90, 270, 261, 111))
         self.loadingDetection.setStyleSheet("* {\n""background: transparent;\n""color: rgb(169,169,169);\n"" font-size: 16px;}")
         self.loadingDetection.setObjectName("loading")
-        self.loadingDetection.setText("Hi")
+        self.loadingDetection.setText("")
         self.loadingDetection.show()
 
 
@@ -413,10 +412,8 @@ class Ui_MainWindow(QMainWindow):
             if len(self.images) != 0: 
                 if self.loaded_model is None: 
                     print("No model loaded") 
-                else:    
-                    threading1 = ReturnValueThread(target=linear_predict, args=(self.images, self.loaded_model))
-                    threading1.start()
-                    feature_vector, result, likelihood = threading1.join()
+                else:
+                    feature_vector, result, likelihood = linear_predict(self.images, self.loaded_model)
                     
                     for prob, pred in zip(likelihood, result): 
                         self.prob.append(prob)
@@ -436,10 +433,9 @@ class Ui_MainWindow(QMainWindow):
                             self.temp.append(i)
                 except:
                     pass
-            else: 
-                print("Error")
-        except ZeroDivisionError:
-            print(traceback.format_exc())
+        except RuntimeError:
+            print(RuntimeError)
+            
 
     def clear_image(self):
         if len(self.images) != 0:
