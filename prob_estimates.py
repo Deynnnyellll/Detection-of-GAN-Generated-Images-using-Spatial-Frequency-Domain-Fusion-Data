@@ -1,5 +1,5 @@
 import numpy as np
-import pickle
+from liblinear.liblinearutil import predict
 
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
@@ -16,13 +16,10 @@ def calculate_prob(decision_value):
     except Exception as e:
         print(e)
 
-# prob estimates implementation using calibrated classifier
-def get_prob(data):
-    with open("/Users/Danniel/Downloads/Model/platt_scale_validate_faces.pkl", 'rb') as model_file:
-        clf = pickle.load(model_file)
-
+# prob estimates
+def get_prob(scores, clf):
     try:
-        y_prob = clf.predict_proba(data)
+        a, _, y_prob = predict([], scores, clf, '-b 1')
         return y_prob
     except Exception as e:
         print(e)        

@@ -17,8 +17,9 @@ class Ui_MainWindow(QMainWindow):
         #Container for Real and Gan Images
         self.images = []
 
-        # initialize value of model
+        # initialize value of model and clf
         self.loaded_model = None
+        self.clf = None
 
         # result and probability estimates
         self.result = []
@@ -425,16 +426,19 @@ class Ui_MainWindow(QMainWindow):
 
                 try:
                     if item_exists != True:
-                        self.loaded_model = adapt(true_labels, feature_vector, self.model_file[0])
+                        print(self.type)
+                        self.loaded_model, self.clf = adapt(true_labels, feature_vector, self.model_file[0], self.type)
                         self.display_result()
-                        
+                            
                         # store trained images in temporary list to avoid repeating of incremental learning with the same features
                         for i in self.images:
                             self.temp.append(i)
+                    else:
+                        self.display_result()           
                 except:
-                    pass
-        except RuntimeError:
-            print(RuntimeError)
+                    print("Error")
+        except:
+            print("Something went wrong!")
             
 
     def clear_image(self):
@@ -493,8 +497,8 @@ class Ui_MainWindow(QMainWindow):
 
             for row, (image_name, prediction, probability) in enumerate(zip(self.get_basename(self.images), self.result, self.prob)):
                 self.result_table.setItem(row, 0, QTableWidgetItem(image_name))
-                self.result_table.setItem(row, 1, QTableWidgetItem(f"{(probability[1] * 100):.2f}"))
-                self.result_table.setItem(row, 2, QTableWidgetItem(f"{(probability[0] * 100):.2f}"))
+                self.result_table.setItem(row, 1, QTableWidgetItem(f"{(probability[0] * 100):.2f}"))
+                self.result_table.setItem(row, 2, QTableWidgetItem(f"{(probability[1] * 100):.2f}"))
                 self.result_table.setItem(row, 3, QTableWidgetItem(prediction))
 
             self.eye3.hide()
@@ -526,6 +530,7 @@ class Ui_MainWindow(QMainWindow):
 
     # function to select model
     def select_model(self):
+        self.type = None
         self.notif.show()
         try:
             home_dir = str(Path.home())
@@ -535,6 +540,21 @@ class Ui_MainWindow(QMainWindow):
                 self.notif.hide()
                 messagebox.showinfo(message=f"Model Loaded Successfully")
                 print(self.model_file)
+
+                # load trained platt scale
+                if "faces" in self.model_file[0]:
+                    self.type = "/Users/Danniel/Downloads/Model/Platt Scaling/platt_scale_validate_faces.model"
+                elif "animals" in self.model_file[0]:
+                    self.type = "/Users/Danniel/Downloads/Model/Platt Scaling/platt_scale_validate_animals.model"
+                elif "objects" in self.model_file[0]:
+                    self.type = "/Users/Danniel/Downloads/Model/Platt Scaling/platt_scale_validate_objects.model"
+                elif "scenes" in self.model_file[0]:
+                    self.type ="/Users/Danniel/Downloads/Model/Platt Scaling/platt_scale_validate_scenes.model"
+                else:
+                    self.type = "/Users/Danniel/Downloads/Model/Platt Scaling/platt_scale_validate_combined.model"
+                    
+                # load the clf
+                self.clf = load_model(self.type)  
             else:
                 self.notif.hide()
                 messagebox.showinfo(message="Incompatible model file")
