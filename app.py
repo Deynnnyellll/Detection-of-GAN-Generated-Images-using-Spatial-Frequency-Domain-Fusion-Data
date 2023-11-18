@@ -416,7 +416,7 @@ class Ui_MainWindow(QMainWindow):
                 else:
                     self.loadingDetection.show()  # Show the label before processing starts
                     QApplication.processEvents()# Show the label before processing starts
-                    feature_vector, result, likelihood = linear_predict(self.images, self.loaded_model)
+                    feature_vector, result, likelihood, scores = linear_predict_proba(self.images, self.loaded_model, self.clf)
 
                     for prob, pred in zip(likelihood, result): 
                         self.prob.append(prob)
@@ -430,7 +430,7 @@ class Ui_MainWindow(QMainWindow):
                 try:
                     if item_exists != True:
                         print(self.type)
-                        self.loaded_model, self.clf = adapt(true_labels, feature_vector, self.model_file[0], self.type)
+                        self.loaded_model, self.clf = adapt(true_labels, feature_vector, scores, self.model_file[0], self.type)
                         self.display_result()
 
                         # store trained images in temporary list to avoid repeating of incremental learning with the same features
@@ -546,7 +546,7 @@ class Ui_MainWindow(QMainWindow):
                 messagebox.showinfo(message=f"Model Loaded Successfully")
                 print(self.model_file)
 
-                # load trained platt scale
+                # load trained platt scale (include own directory)
                 if "faces" in self.model_file[0]:
                     self.type = "/Users/Danniel/Downloads/Model/Platt Scaling/platt_scale_validate_faces.model"
                 elif "animals" in self.model_file[0]:

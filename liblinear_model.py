@@ -1,5 +1,5 @@
 from preprocessing import preprocessing
-from liblinear.liblinearutil import train, predict, save_model
+from liblinear.liblinearutil import train, predict, save_model, load_model
 from train import spatial_frequency_feature_fusion
 import numpy as np
 from prob_estimates import calculate_prob, get_prob
@@ -62,10 +62,10 @@ def linear_predict_proba(images, loaded_model, clf):
     try:
         # predict the result
         print("\n\n-------------------THE MODEL IS PREDICTING----------------------------\n")
-        predicted_labels, _, scores = predict([], feature_vector, loaded_model)
+        _, _, scores = predict([], feature_vector, loaded_model)
 
         # get the probability estimates
-        likelihood = get_prob(scores, clf)
+        predicted_labels, likelihood = get_prob(scores, clf)
 
         print("------------------------------------------DISPLAYING THE RESULT-----------------------------------\n")
         result = []
@@ -75,24 +75,27 @@ def linear_predict_proba(images, loaded_model, clf):
             elif i == 0.0:
                 result.append("GAN")     
         return feature_vector, result, likelihood, scores
+        print("Hi")
     except Exception as e:
         print(e)        
 
 # application of incremental learning
-def adapt(labels, feature_vector, model_file, clf_file): 
+def adapt(labels, feature_vector, svm_scores, model_file, clf_file): 
     try:
         # reshape true labels
         true_label = labels.reshape(labels.shape[0])
 
         # initialize problem and param
-        print("hi")
         model = train(true_label, feature_vector, f'-s 1 -c 1 -B 1 -i {model_file}')
+        save_model("/Users/Danniel/Downloads/Model/Validate/faces_old_updated_liblinear.model", model)
         
-        plat = None
-        # os.chdir("/Users/Danniel/Downloads/Model/Platt Scaling")
-        # platt_scale_file = os.path.basename(clf_file)
-        # plat = train(true_label, feature_vector, f'-s 0 -c 1 -B 1 -i {platt_scale_file}')
-        # save_model("/Users/Danniel/Downloads/Model/Platt Scaling/platt_scale_validate_faces.model", plat)
-        return model, plat
+        os.chdir("/Users/Danniel/Downloads/Model/Platt Scaling")
+        platt_scale_file = os.path.basename(clf_file)
+
+        plat = train(true_label, svm_scores, f'-s 0 -c 1 -B 1 -i {platt_scale_file}')
+        save_model("/Users/Danniel/Downloads/Model/Platt Scaling/platt_scale_validate_updated_faces.model", plat)
+        plat_updated = load_model("/Users/Danniel/Downloads/Model/Platt Scaling/platt_scale_validate_updated_faces.model")
+
+        return model, plat_updated
     except:
-        print("Does not support incremental learning")    
+        print("Does not support incremental learning")
