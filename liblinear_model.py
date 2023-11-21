@@ -1,101 +1,88 @@
 from preprocessing import preprocessing
-from liblinear.liblinearutil import train, predict, save_model, load_model
+from liblinear.liblinearutil import train, predict, load_model, save_model
 from train import spatial_frequency_feature_fusion
+from prob_estimates import get_prob
 import numpy as np
-from prob_estimates import calculate_prob, get_prob
 import os
 
-# test the model
-def linear_predict(images, loaded_model):
-    # preprocessing
-    preprocessed_img = [preprocessing(i) for i in images] 
-
-    # apply spatial frequency feature fusion to the preprocessed images
-    fused_features = spatial_frequency_feature_fusion(preprocessed_img)
-
-    feature_vector = [i.flatten() for i in fused_features]
-
-    print(feature_vector)
-
-
-    labels = np.ones((len(feature_vector), 1)) 
-    true_label = labels.reshape(labels.shape[0])
-
-
-    try:
-        # predict the result
-        print("\n\n-------------------THE MODEL IS PREDICTING----------------------------\n")
-        predicted_labels, _, prob_estimates = predict([], feature_vector, loaded_model)
-
-        likelihood = [calculate_prob(i[0]) for i in prob_estimates]
-
-
-        print("------------------------------------------DISPLAYING THE RESULT-----------------------------------\n")
-        result = []
-        for i in predicted_labels:
-            if i == 1.0:
-                result.append("Real")
-            elif i == 0.0:
-                result.append("GAN")
-
-        return feature_vector, result, likelihood
-    except Exception as e:
-        print(e)
-
-
-# still in experimental since prob estimates is trained in another model
+# predict labels calibrated with probability estimates
 def linear_predict_proba(images, loaded_model, clf):
     # preprocessing
-    preprocessed_img = [preprocessing(i) for i in images] 
+    preprocessed_img = [preprocessing(image) for image in images]
 
     # apply spatial frequency feature fusion to the preprocessed images
     fused_features = spatial_frequency_feature_fusion(preprocessed_img)
 
-    feature_vector = [i.flatten() for i in fused_features]
+    feature_vector = [feature.flatten() for feature in fused_features]
 
-    print(feature_vector)
+    # predict the result
+    print("\n\n-------------------THE MODEL IS PREDICTING----------------------------\n")
+    _, _, scores = predict([], feature_vector, loaded_model)
 
+    print("SVM Scores Before Incremental: ", scores)
 
-    labels = np.ones((len(feature_vector), 1)) 
-    true_label = labels.reshape(labels.shape[0])
+    # get the probability estimates using the predicted svm scores of the svm classifier
+    predicted_labels, likelihood = get_prob(scores, clf)
 
-    try:
-        # predict the result
-        print("\n\n-------------------THE MODEL IS PREDICTING----------------------------\n")
-        _, _, scores = predict([], feature_vector, loaded_model)
+    # iterate over the "predicted_labels" list and convert each float value to equivalent label in string
+    # in this case, it can either be Real or GAN
+    result = ["Real" if i == 1.0 else "GAN" for i in predicted_labels]
 
-        # get the probability estimates
-        predicted_labels, likelihood = get_prob(scores, clf)
-
-        print("------------------------------------------DISPLAYING THE RESULT-----------------------------------\n")
-        result = []
-        for i in predicted_labels:
-            if i == 1.0:
-                result.append("Real")
-            elif i == 0.0:
-                result.append("GAN")     
-        return feature_vector, result, likelihood, scores
-        print("Hi")
-    except Exception as e:
-        print(e)        
+    return result, likelihood
 
 # application of incremental learning
-def adapt(labels, feature_vector, svm_scores, model_file, clf_file): 
+def adapt(images, model_file, clf_file): 
     try:
-        # reshape true labels
-        true_label = labels.reshape(labels.shape[0])
+        real = []
+        gan = []
+        real_labels = []
+        gan_labels = []
+        sorted_images = []
 
-        # initialize problem and param
-        model = train(true_label, feature_vector, f'-s 1 -c 1 -B 1 -i {model_file}')
-        save_model("/Users/Danniel/Downloads/Model/Validate/faces_old_updated_liblinear.model", model)
+        for image in images:
+            if "real" in image:
+                real.append(image)
+                label = np.ones(1)
+                real_labels.append(label)
+            elif "gan" in image:
+                gan.append(image)
+                label = np.zeros(1)
+                gan_labels.append(label)
+
+        sorted_images.extend(real)
+        sorted_images.extend(gan)
+            
+        # preprocessing
+        preprocessed_img = [preprocessing(image) for image in sorted_images]
+
+        # apply spatial frequency feature fusion to the preprocessed images
+        fused_features = spatial_frequency_feature_fusion(preprocessed_img)
+
+        feature_vector = [feature.flatten() for feature in fused_features]
+
+        labels = np.vstack((real_labels, gan_labels))
+        true_labels = labels.reshape(labels.shape[0])
+
+        # incremental learning of svm
+        model = train(true_labels, feature_vector, f'-s 1 -c 1 -B 1 -i {model_file}')
+        save_model('faces_updated.model', model)
+
+            # predict new value and get the svm scores to add in the platt scaler
+        _, _, svm_scores = predict(true_labels, feature_vector, model)
+
+        print("SVM Scores after Incremental Learning: ", svm_scores)
+
+        os.chdir("/Users/Danniel/Detection-of-GAN-Generated-Images-using-Spatial-Frequency-Domain-Fusion-Data/platt scaler")
+        clf_file_final = os.path.basename(clf_file)
+
+        # incremental learning of platt scaler
+        plat = train(true_labels, svm_scores, f'-s 0 -c 0.1 -B 1 -i {clf_file_final}')
+        save_model('platt_updated.model', plat)
         
-        os.chdir("/Users/Danniel/Downloads/Model/Platt Scaling")
-        platt_scale_file = os.path.basename(clf_file)
+        predicted_labels, _, prob_estimates = predict([], svm_scores, plat, '-b 1')
 
-        plat = train(true_label, svm_scores, f'-s 0 -c 1 -B 1 -i {platt_scale_file}')
-        save_model("/Users/Danniel/Downloads/Model/Platt Scaling/platt_scale_validate_updated_faces.model", plat)
-        plat_updated = load_model("/Users/Danniel/Downloads/Model/Platt Scaling/platt_scale_validate_updated_faces.model")
 
-        return model, plat_updated
-    except:
-        print("Does not support incremental learning")
+
+        return model, plat
+    except Exception as e:
+        print(f"Incremental Learning Error: {e}")
