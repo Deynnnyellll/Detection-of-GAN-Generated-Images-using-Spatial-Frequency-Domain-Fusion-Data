@@ -1,6 +1,6 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
-from PyQt6.QtWidgets import (QFileDialog, QLabel, QMainWindow, QApplication, QScrollArea, QTableWidget, QTableWidgetItem)
-from PyQt6.QtGui import QPixmap
+from PyQt6.QtWidgets import (QFileDialog, QWidget, QLabel, QMainWindow, QApplication, QScrollArea, QTableWidget, QTableWidgetItem,QVBoxLayout,)
+from PyQt6.QtGui import QPixmap, QImage
 import sys
 from pathlib import Path
 import os
@@ -11,6 +11,9 @@ import numpy as np
 
 sys.path.append("/Users/Danniel/Detection-of-GAN-Generated-Images-using-Spatial-Frequency-Domain-Fusion-Data/learned image data")
 from read_write import read_inc_images, write_inc_images
+
+from PyQt6.QtCore import QTimer
+import fitz  # PyMuPDF pip install PyMuPDF
 
 
 
@@ -258,7 +261,7 @@ class Ui_MainWindow(QMainWindow):
 
         # select model
         self.modelBar.clicked.connect(self.select_model)
-
+        self.docuBar.clicked.connect(self.setDocumentationPage)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -271,7 +274,7 @@ class Ui_MainWindow(QMainWindow):
         self.modelBar.setText(_translate("MainWindow", "Model"))
         self.docuBar.setText(_translate("MainWindow", "Documentation"))
         self.aboutBar.setText(_translate("MainWindow", "About"))
-
+    
     def setWelcomePage(self):
         MainWindow.setStyleSheet("#centralwidget {\n""background-image: url(resources/Home page.png);\n""}")
         self.icon.hide()
@@ -296,6 +299,13 @@ class Ui_MainWindow(QMainWindow):
         self.aboutBar_2.hide()
         self.eye4.hide()
         self.notif.hide()
+
+        scroll_area = self.centralwidget.findChild(QScrollArea)
+        if scroll_area and scroll_area.isVisible():
+            scroll_area.hide()
+
+
+        
         self.getStarted.clicked.connect(self.setHomePage)
         #MainWindow.setStyleSheet("#centralwidget {\n""background-image: url(resources/Get Started.jpg);\n""}")
         self.aboutBar.clicked.connect(self.setAboutPage)
@@ -375,7 +385,58 @@ class Ui_MainWindow(QMainWindow):
         self.loadingDetection.setStyleSheet("* {\n""background: transparent;\n""color: rgb(169,169,169);\n"" font-size: 16px;}")
         self.loadingDetection.setObjectName("loading")
         self.loadingDetection.setText("Detecting Image")
+
+    def setDocumentationPage(self):
+        # Customize UI elements for the documentation page
+        MainWindow.setStyleSheet("#centralwidget {\n""background-image: url(resources/Get Started.jpg);\n""}")
+        self.getStarted.hide()
+        self.imageLabel.hide()
+        self.resultLabel.hide()
+        self.aibutton.hide()
+        self.clearbutton.hide()
+        self.Rectangle1.hide()
+        self.Rectangle2.hide()
+        self.uploadBar.hide()
+        self.Wrapper.hide()
+        self.uploadButton.hide()
+        self.eye3.hide()
+        self.aboutBar_2.hide()
+        self.uploadLabel.hide()
+        self.notif.hide()
+        self.homeBar.clicked.connect(self.setWelcomePage)
         
+
+        self.displayDocumentation()
+
+    def displayDocumentation(self):
+        doc = fitz.open('E:\GAN Detection\Detection-of-GAN-Generated-Images-using-Spatial-Frequency-Domain-Fusion-Data\documentation.pdf')
+
+        scroll_area = QScrollArea(self.centralwidget)
+        scroll_area.setGeometry(150, 100, 700, 520)   #Adjust the size x, y, width, height
+        scroll_area.setWidgetResizable(True)
+
+        content_widget = QWidget()
+        scroll_area.setWidget(content_widget)
+
+        layout = QVBoxLayout(content_widget)
+
+        for i in range(len(doc)):
+            page = doc.load_page(i)
+            pixmap = page.get_pixmap()
+
+            label = QLabel()
+            label.setPixmap(QPixmap.fromImage(
+                QImage(pixmap.samples, pixmap.width, pixmap.height, pixmap.stride,
+                       QImage.Format.Format_RGB888 if pixmap.alpha == 0 else QImage.Format.Format_RGBA8888))
+            )
+           
+            layout.addWidget(label)
+
+        scroll_area.show()
+
+
+
+
 
     def uploadImage(self):
         home_dir = str(Path.home())
