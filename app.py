@@ -496,15 +496,17 @@ class Ui_MainWindow(QMainWindow):
         finally:
             self.loadingDetection.hide()
             
-            item_exists = all(item in self.temp for item in self.images)
-            if item_exists != True:
-                    self.loaded_model, self.clf = adapt(self.images, self.model_file[0], self.type)
-                    # store trained images in temporary list to avoid repeating of incremental learning with the same features
-                    for i in self.images:
-                        self.temp.append(i)
+            try:
+                item_exists = all(item in self.temp for item in self.images)
+                if item_exists != True:
+                        self.loaded_model, self.clf = adapt(self.images, self.model_file[0], self.type)
+                        # store trained images in temporary list to avoid repeating of incremental learning with the same features
+                        for i in self.images:
+                            self.temp.append(i)
 
-            write_inc_images(self.temp) 
-            
+                write_inc_images(self.temp) 
+            except Exception as e:
+                print(f"Something went wrong! : {e}")
     # reset
     def clear_image(self):
         if len(self.images) != 0:
