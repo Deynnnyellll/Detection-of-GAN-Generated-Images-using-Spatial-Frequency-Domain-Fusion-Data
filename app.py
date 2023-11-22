@@ -7,13 +7,13 @@ import os
 from liblinear_model import linear_predict_proba, adapt
 from liblinear.liblinearutil import load_model
 from tkinter import messagebox
-import numpy as np
+import fitz  # pip install PyMuPDF
 
-sys.path.append("/Users/Danniel/Detection-of-GAN-Generated-Images-using-Spatial-Frequency-Domain-Fusion-Data/learned image data")
+
+relative_path = "learned image data"
+path_to_append = os.path.join(os.path.dirname(__file__), relative_path)
+sys.path.append(path_to_append)
 from read_write import read_inc_images, write_inc_images
-
-from PyQt6.QtCore import QTimer
-import fitz  # PyMuPDF pip install PyMuPDF
 
 
 
@@ -36,14 +36,12 @@ class Ui_MainWindow(QMainWindow):
         # true labels
         self.true_labels = []
 
-        # temporary file
+        # temporary file (delete inc_images in learned image data folder if your model did not undergo incremental)
         try:
             self.temp = read_inc_images()
         except:
             print("Initializing empty temp list")
-            self.temp = [] 
-
-        print(self.temp)    
+            self.temp = []  
 
         QMainWindow().__init__(self)
         self.ui = MainWindow
@@ -386,6 +384,9 @@ class Ui_MainWindow(QMainWindow):
         self.loadingDetection.setObjectName("loading")
         self.loadingDetection.setText("Detecting Image")
 
+    
+    
+    
     def setDocumentationPage(self):
         # Customize UI elements for the documentation page
         MainWindow.setStyleSheet("#centralwidget {\n""background-image: url(resources/Get Started.jpg);\n""}")
@@ -405,11 +406,10 @@ class Ui_MainWindow(QMainWindow):
         self.notif.hide()
         self.homeBar.clicked.connect(self.setWelcomePage)
         
-
         self.displayDocumentation()
 
     def displayDocumentation(self):
-        doc = fitz.open('E:\GAN Detection\Detection-of-GAN-Generated-Images-using-Spatial-Frequency-Domain-Fusion-Data\documentation.pdf')
+        doc = fitz.open('documentation/documentation.pdf')
 
         scroll_area = QScrollArea(self.centralwidget)
         scroll_area.setGeometry(150, 100, 700, 520)   #Adjust the size x, y, width, height
@@ -434,10 +434,7 @@ class Ui_MainWindow(QMainWindow):
 
         scroll_area.show()
 
-
-
-
-
+    # upload images and display them in the left panel of home page
     def uploadImage(self):
         home_dir = str(Path.home())
         fname, _ = QFileDialog.getOpenFileNames(self, 'Open file', home_dir)
@@ -471,13 +468,14 @@ class Ui_MainWindow(QMainWindow):
 
                 self.image_grid_layout.setContentsMargins(0, 2, 0, 2)  
 
+    # get the basename (example: /user/hi.png => hi.png)
     def get_basename(self, images):
         images_basename = [os.path.basename(images) for images in self.images]
 
         return images_basename
  
 
-    # detect whether an image is gan or real    
+    # detect whether an image is gan or real with probability estimates    
     def predict_result(self): 
         try: 
             if len(self.images) != 0: 
@@ -507,7 +505,7 @@ class Ui_MainWindow(QMainWindow):
 
             write_inc_images(self.temp) 
             
-
+    # reset
     def clear_image(self):
         if len(self.images) != 0:
             self.images.clear()
@@ -539,6 +537,7 @@ class Ui_MainWindow(QMainWindow):
         else:
             messagebox.showinfo(message="Images already cleared")
 
+    # display the result in table
     def display_result(self):
         
         # Create labels for statistics
@@ -596,7 +595,7 @@ class Ui_MainWindow(QMainWindow):
             messagebox.showinfo(message="No results to display. Please predict results first.") 
 
 
-    # function to select model
+    # select model
     def select_model(self):
         self.type = None
         self.notif.show()
@@ -611,7 +610,7 @@ class Ui_MainWindow(QMainWindow):
 
                 # load trained platt scale (include own directory)
                 if "faces" in self.model_file[0]:
-                    self.type = "platt_scale_validate_faces.model"
+                    self.type = "platt scaler/platt_scale_validate_faces.model"
                 elif "animals" in self.model_file[0]:
                     self.type = "platt scaler/platt_scale_validate_animals.model"
                 elif "objects" in self.model_file[0]:

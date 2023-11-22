@@ -68,9 +68,13 @@ def adapt(images, model_file, clf_file):
             # predict new value and get the svm scores to add in the platt scaler
         _, _, svm_scores = predict(true_labels, feature_vector, model)
 
+        # move to the platt scaler dir to access the regression model
+        os.chdir("/Users/Danniel/Detection-of-GAN-Generated-Images-using-Spatial-Frequency-Domain-Fusion-Data/platt scaler")
+        clf = os.path.basename(clf_file)
         # incremental learning of platt scaler
-        plat = train(true_labels, svm_scores, f'-s 0 -c 0.1 -B 1 -i {clf_file}')
+        plat = train(true_labels, svm_scores, f'-s 0 -c 0.1 -B 1 -i {clf}')
 
+        os.chdir("/Users/Danniel/Detection-of-GAN-Generated-Images-using-Spatial-Frequency-Domain-Fusion-Data")
 
         return model, plat
     except Exception as e:
