@@ -7,15 +7,18 @@ import os
 from liblinear_model import linear_predict_proba, adapt
 from liblinear.liblinearutil import load_model
 from tkinter import messagebox
-from custom import ReturnValueThread
 import numpy as np
-from PyQt6.QtCore import QTimer
+
+sys.path.append("/Users/Danniel/Detection-of-GAN-Generated-Images-using-Spatial-Frequency-Domain-Fusion-Data/learned image data")
+from read_write import read_inc_images, write_inc_images
+
 
 
 class Ui_MainWindow(QMainWindow):
     def __init__(self):
         super().__init__() 
 
+        os.system('cls')
         #Container for Real and Gan Images
         self.images = []
 
@@ -31,7 +34,13 @@ class Ui_MainWindow(QMainWindow):
         self.true_labels = []
 
         # temporary file
-        self.temp = []
+        try:
+            self.temp = read_inc_images()
+        except:
+            print("Initializing empty temp list")
+            self.temp = [] 
+
+        print(self.temp)    
 
         QMainWindow().__init__(self)
         self.ui = MainWindow
@@ -416,34 +425,32 @@ class Ui_MainWindow(QMainWindow):
                 else:
                     self.loadingDetection.show()  # Show the label before processing starts
                     QApplication.processEvents()# Show the label before processing starts
-                    print(self.clf)
                     result, likelihood = linear_predict_proba(self.images, self.loaded_model, self.clf)
 
                     for prob, pred in zip(likelihood, result): 
                         self.prob.append(prob)
                         self.result.append(pred)
                     QApplication.processEvents() 
-                item_exists = all(item in self.temp for item in self.images)
-                self.display_result()
-
-                try:
-                    if item_exists != True:
-                        print(self.type)
-                        self.loaded_model, self.clf = adapt(self.images, self.model_file[0], self.type)
-                        # store trained images in temporary list to avoid repeating of incremental learning with the same features
-                        for i in self.images:
-                            self.temp.append(i)               
-                except:
-                    pass 
-        except RuntimeError:
-            print(RuntimeError)
+                self.display_result() 
+        except Exception as e:
+            print(f"Something went wrong! : {e}")
         finally:
             self.loadingDetection.hide()
+            
+            item_exists = all(item in self.temp for item in self.images)
+            if item_exists != True:
+                    self.loaded_model, self.clf = adapt(self.images, self.model_file[0], self.type)
+                    # store trained images in temporary list to avoid repeating of incremental learning with the same features
+                    for i in self.images:
+                        self.temp.append(i)
+
+            write_inc_images(self.temp) 
             
 
     def clear_image(self):
         if len(self.images) != 0:
             self.images.clear()
+            self.prob.clear()
             self.result.clear()
             self.eye3.show()
             self.loadingDetection.hide()
@@ -454,20 +461,20 @@ class Ui_MainWindow(QMainWindow):
 
                 # Clear the image labels from the layout
                 for i in reversed(range(self.image_grid_layout.count())):
-                    self.image_grid_layout.itemAt(i).widget().setParent(None)
+                    self.image_grid_layout.itemAt(i).widget().setParent(None)   
 
                 self.result_table.hide()
                 self.processed_images_label.hide()
                 self.detected_real_label.hide()
                 self.detected_gan_label.hide()
-            except:
-                print("Something went wrong!") 
+            except Exception as e:
+                print(f"Something went wrong! : {e}") 
            
             self.uploadButton.show()
             self.image_container.hide()
             self.aboutBar_2.show()
             os.system('cls')
-            messagebox.showinfo(message=f"Images {len(self.images)}")   
+            messagebox.showinfo(message=f"Images {len(self.images)}")     
         else:
             messagebox.showinfo(message="Images already cleared")
 
@@ -543,7 +550,7 @@ class Ui_MainWindow(QMainWindow):
 
                 # load trained platt scale (include own directory)
                 if "faces" in self.model_file[0]:
-                    self.type = "platt scaler/platt_scale_validate_faces.model"
+                    self.type = "platt_scale_validate_faces.model"
                 elif "animals" in self.model_file[0]:
                     self.type = "platt scaler/platt_scale_validate_animals.model"
                 elif "objects" in self.model_file[0]:

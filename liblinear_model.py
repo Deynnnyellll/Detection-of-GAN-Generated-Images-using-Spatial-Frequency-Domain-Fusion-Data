@@ -19,7 +19,6 @@ def linear_predict_proba(images, loaded_model, clf):
     print("\n\n-------------------THE MODEL IS PREDICTING----------------------------\n")
     _, _, scores = predict([], feature_vector, loaded_model)
 
-    print("SVM Scores Before Incremental: ", scores)
 
     # get the probability estimates using the predicted svm scores of the svm classifier
     predicted_labels, likelihood = get_prob(scores, clf)
@@ -65,22 +64,12 @@ def adapt(images, model_file, clf_file):
 
         # incremental learning of svm
         model = train(true_labels, feature_vector, f'-s 1 -c 1 -B 1 -i {model_file}')
-        save_model('faces_updated.model', model)
 
             # predict new value and get the svm scores to add in the platt scaler
         _, _, svm_scores = predict(true_labels, feature_vector, model)
 
-        print("SVM Scores after Incremental Learning: ", svm_scores)
-
-        os.chdir("/Users/Danniel/Detection-of-GAN-Generated-Images-using-Spatial-Frequency-Domain-Fusion-Data/platt scaler")
-        clf_file_final = os.path.basename(clf_file)
-
         # incremental learning of platt scaler
-        plat = train(true_labels, svm_scores, f'-s 0 -c 0.1 -B 1 -i {clf_file_final}')
-        save_model('platt_updated.model', plat)
-        
-        predicted_labels, _, prob_estimates = predict([], svm_scores, plat, '-b 1')
-
+        plat = train(true_labels, svm_scores, f'-s 0 -c 0.1 -B 1 -i {clf_file}')
 
 
         return model, plat
