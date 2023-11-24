@@ -587,13 +587,13 @@ class Ui_MainWindow(QMainWindow):
 
                 # load trained platt scale (include own directory)
                 if "faces" in self.model_file[0]:
-                    self.type = "platt scaler/platt_scale_validate_faces.model"
+                    self.type = "platt scaler/platt_scale_faces.model"
                 elif "animals" in self.model_file[0]:
                     self.type = "platt scaler/platt_scale_animals.model"
                 elif "objects" in self.model_file[0]:
-                    self.type = "platt scaler/platt_scale_validate_objects.model"
+                    self.type = "platt scaler/platt_scale_objects.model"
                 elif "scenes" in self.model_file[0]:
-                    self.type ="platt scaler/platt_scale_validate_combined.model"
+                    self.type ="platt scaler/platt_scale_combined.model"
                 else:
                     self.type = "platt_scale_validate_combined.model"
                     
