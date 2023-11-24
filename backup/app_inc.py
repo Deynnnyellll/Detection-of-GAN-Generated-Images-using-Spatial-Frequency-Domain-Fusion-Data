@@ -4,10 +4,16 @@ from PyQt6.QtGui import QPixmap, QImage
 import sys
 from pathlib import Path
 import os
-from liblinear_model import linear_predict_proba
+from liblinear_model import linear_predict_proba, adapt
 from liblinear.liblinearutil import load_model
 from tkinter import messagebox
 import fitz  # pip install PyMuPDF
+
+
+relative_path = "learned image data"
+path_to_append = os.path.join(os.path.dirname(__file__), relative_path)
+sys.path.append(path_to_append)
+from read_write import read_inc_images, write_inc_images
 
 
 
@@ -28,7 +34,14 @@ class Ui_MainWindow(QMainWindow):
         self.prob = []
 
         # true labels
-        self.true_labels = [] 
+        self.true_labels = []
+
+        # temporary file (delete inc_images in learned image data folder if your model did not undergo incremental)
+        try:
+            self.temp = read_inc_images()
+        except:
+            print("Initializing empty temp list")
+            self.temp = []  
 
         QMainWindow().__init__(self)
         self.ui = MainWindow
@@ -482,6 +495,18 @@ class Ui_MainWindow(QMainWindow):
             print(f"Something went wrong! : {e}")
         finally:
             self.loadingDetection.hide()
+            
+            try:
+                item_exists = all(item in self.temp for item in self.images)
+                if item_exists != True:
+                        self.loaded_model, self.clf = adapt(self.images, self.model_file[0], self.type)
+                        # store trained images in temporary list to avoid repeating of incremental learning with the same features
+                        for i in self.images:
+                            self.temp.append(i)
+
+                write_inc_images(self.temp) 
+            except Exception as e:
+                print(f"Something went wrong! : {e}")
     # reset
     def clear_image(self):
         if len(self.images) != 0:
@@ -541,8 +566,8 @@ class Ui_MainWindow(QMainWindow):
 
             for row, (image_name, prediction, probability) in enumerate(zip(self.get_basename(self.images), self.result, self.prob)):
                 self.result_table.setItem(row, 0, QTableWidgetItem(image_name))
-                self.result_table.setItem(row, 1, QTableWidgetItem(f"{(probability[1] * 100):.2f}"))
-                self.result_table.setItem(row, 2, QTableWidgetItem(f"{(probability[0] * 100):.2f}"))
+                self.result_table.setItem(row, 1, QTableWidgetItem(f"{(probability[0] * 100):.2f}"))
+                self.result_table.setItem(row, 2, QTableWidgetItem(f"{(probability[1] * 100):.2f}"))
                 self.result_table.setItem(row, 3, QTableWidgetItem(prediction))
 
             self.eye3.hide()
@@ -589,7 +614,7 @@ class Ui_MainWindow(QMainWindow):
                 if "faces" in self.model_file[0]:
                     self.type = "platt scaler/platt_scale_validate_faces.model"
                 elif "animals" in self.model_file[0]:
-                    self.type = "platt scaler/platt_scale_animals.model"
+                    self.type = "platt scaler/platt_scale_validate_animals.model"
                 elif "objects" in self.model_file[0]:
                     self.type = "platt scaler/platt_scale_validate_objects.model"
                 elif "scenes" in self.model_file[0]:

@@ -75,16 +75,16 @@ def spatial_frequency_feature_fusion(images):
 
 
 
-def prepare_data(real, gan):
+def prepare_data(gan, real):
     print("----------------------------Preparing the Data-------------------------------\n") 
     #label real  and gan datasets
-    real_label = np.ones((len(real), 1))
-    gan_label = np.zeros((len(gan), 1))
+    gan_label = np.ones((len(gan), 1))
+    real_label = np.zeros((len(real), 1))
 
 
     # combine the labels and datasets
-    dataset_labels = np.vstack((real_label, gan_label))
-    datasets = np.vstack((real, gan))
+    dataset_labels = np.vstack((gan_label, real_label))
+    datasets = np.vstack((gan, real))
 
     # reshape the labels and datasets for svm requirements
     datasets_final = [i.flatten() for i in datasets]
