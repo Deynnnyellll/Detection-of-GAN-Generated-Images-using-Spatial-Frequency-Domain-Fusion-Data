@@ -593,7 +593,7 @@ class Ui_MainWindow(QMainWindow):
                 elif "objects" in self.model_file[0]:
                     self.type = "platt scaler/platt_scale_objects.model"
                 elif "scenes" in self.model_file[0]:
-                    self.type ="platt scaler/platt_scale_combined.model"
+                    self.type ="platt scaler/platt_scale_scenes.model"
                 else:
                     self.type = "platt_scale_validate_combined.model"
                     
