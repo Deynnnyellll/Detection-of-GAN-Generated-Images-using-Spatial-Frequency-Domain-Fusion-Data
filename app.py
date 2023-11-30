@@ -7,7 +7,7 @@ import os
 from liblinear_model import linear_predict_proba
 from liblinear.liblinearutil import load_model
 from tkinter import messagebox
-import fitz  # pip install PyMuPDF
+import fitz
 
 
 
@@ -533,7 +533,7 @@ class Ui_MainWindow(QMainWindow):
             self.result_table = QTableWidget(self.centralwidget)
             self.result_table.setRowCount(len(self.result))
             self.result_table.setColumnCount(4)
-            self.result_table.setHorizontalHeaderLabels(["Image Name", "Real Probability", "GAN Probability", "Prediction"])
+            self.result_table.setHorizontalHeaderLabels(["Image Name", "GAN Probability", "Real Probability", "Prediction"])
             self.result_table.setStyleSheet("background-color: transparent")
             self.result_table.setGeometry(560, 115, 363, 320)  # Adjust the size x, y, width, height
             self.result_table.horizontalHeader().setStyleSheet("background-color: transparent")
@@ -541,8 +541,8 @@ class Ui_MainWindow(QMainWindow):
 
             for row, (image_name, prediction, probability) in enumerate(zip(self.get_basename(self.images), self.result, self.prob)):
                 self.result_table.setItem(row, 0, QTableWidgetItem(image_name))
-                self.result_table.setItem(row, 1, QTableWidgetItem(f"{(probability[1] * 100):.2f}"))
-                self.result_table.setItem(row, 2, QTableWidgetItem(f"{(probability[0] * 100):.2f}"))
+                self.result_table.setItem(row, 1, QTableWidgetItem(f"{(probability[0] * 100):.2f}"))
+                self.result_table.setItem(row, 2, QTableWidgetItem(f"{(probability[1] * 100):.2f}"))
                 self.result_table.setItem(row, 3, QTableWidgetItem(prediction))
 
             self.eye3.hide()
@@ -598,6 +598,7 @@ class Ui_MainWindow(QMainWindow):
                     self.type = "platt_scale_validate_combined.model"
                     
                 # load the clf
+                print(self.type)
                 self.clf = load_model(self.type)  
             else:
                 self.notif.hide()

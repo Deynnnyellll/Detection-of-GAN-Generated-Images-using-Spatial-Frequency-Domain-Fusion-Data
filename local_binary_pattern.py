@@ -1,6 +1,4 @@
 import numpy as np
-from preprocessing import preprocessing
-from matplotlib import pyplot as plt
 
 def get_pixel(image, x, y):
     if 0 <= x < len(image) and 0 <= y < len(image[0]):

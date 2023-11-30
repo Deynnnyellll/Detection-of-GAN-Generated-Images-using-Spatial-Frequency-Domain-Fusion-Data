@@ -1,9 +1,6 @@
 from preprocessing import preprocessing
-from liblinear.liblinearutil import train, predict, load_model, save_model
+from liblinear.liblinearutil import predict
 from train import spatial_frequency_feature_fusion
-from prob_estimates import get_prob
-import numpy as np
-import os
 
 # predict labels calibrated with probability estimates
 def linear_predict_proba(images, loaded_model, clf):
@@ -17,7 +14,7 @@ def linear_predict_proba(images, loaded_model, clf):
 
     # predict the result
     print("\n\n-------------------THE MODEL IS PREDICTING----------------------------\n")
-    _, _, scores = predict([], feature_vector, loaded_model)
+    _, _, scores = predict([], feature_vector, loaded_model, '-q')
 
 
     # get the probability estimates using the predicted svm scores of the svm classifier
@@ -28,3 +25,12 @@ def linear_predict_proba(images, loaded_model, clf):
     result = ["GAN" if i == 1.0 else "Real" for i in predicted_labels]
 
     return result, likelihood
+
+
+# prob estimates
+def get_prob(scores, clf):
+    try:
+        predicted_labels, _, y_prob = predict([], scores, clf, '-q -b 1')
+        return predicted_labels, y_prob
+    except Exception as e:
+        print(e)        

@@ -10,7 +10,6 @@ going to feature extraction phase
 
 import cv2
 import numpy as np
-import time
 
 def preprocessing(image):
     # Load the image in grayscale
