@@ -1,6 +1,6 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtWidgets import (QFileDialog, QWidget, QLabel, QMainWindow, QApplication, QScrollArea, QTableWidget, QTableWidgetItem,QVBoxLayout,)
-from PyQt6.QtGui import QPixmap, QImage
+from PyQt6.QtGui import QPixmap, QImage , QIcon
 import sys
 from pathlib import Path
 import os
@@ -30,9 +30,12 @@ class Ui_MainWindow(QMainWindow):
         # true labels
         self.true_labels = [] 
 
+       
+
         QMainWindow().__init__(self)
         self.ui = MainWindow
         self.setupUi(self)
+        
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -41,6 +44,8 @@ class Ui_MainWindow(QMainWindow):
         self.centralwidget.setObjectName("centralwidget")
         MainWindow.setCentralWidget(self.centralwidget)
 
+
+       
         #Get Started Button
         self.getStarted = QtWidgets.QPushButton(parent=self.centralwidget)
         self.getStarted.setGeometry(QtCore.QRect(440, 330, 121, 51))
@@ -251,7 +256,9 @@ class Ui_MainWindow(QMainWindow):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
+
         _translate = QtCore.QCoreApplication.translate
+       
         MainWindow.setWindowTitle(_translate("MainWindow", "illuscan"))
         self.logoName.setText(_translate("MainWindow", "illuscan"))
         self.homeBar.setText(_translate("MainWindow", "Home"))
@@ -613,5 +620,10 @@ if __name__ == "__main__":
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
+    icon_path = "resources/openAI-logo.png"
+    icon = QtGui.QIcon(icon_path)
+    MainWindow.setWindowIcon(icon)
     MainWindow.show()
     sys.exit(app.exec())
+
+  
