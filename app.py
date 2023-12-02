@@ -374,10 +374,10 @@ class Ui_MainWindow(QMainWindow):
 
         self.loadingDetection = QtWidgets.QLabel(parent=self.Wrapper)
         self.loadingDetection.setGeometry(QtCore.QRect(160, 270, 261, 111))
+        self.loadingDetection.setScaledContents(True)
         self.loadingDetection.setStyleSheet("* {\n""background: transparent;\n""color: rgb(169,169,169);\n"" font-size: 16px;}")
         self.loadingDetection.setObjectName("loading")
         self.loadingDetection.setText("Detecting Image")
-
     
     
     
@@ -442,8 +442,19 @@ class Ui_MainWindow(QMainWindow):
                 pixmap = QPixmap(file)
                 pixmap = pixmap.scaled(110, 110)
 
-                label = QtWidgets.QLabel()
-                label.setPixmap(pixmap)
+                image_label = QtWidgets.QLabel()
+                image_label.setPixmap(pixmap)
+
+                file_label = QtWidgets.QLabel(os.path.basename(file))
+                file_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+
+                # Create a layout to contain the image and file name label
+                self.widget = QtWidgets.QWidget()
+                self.widget.setFixedHeight(140)
+                layout = QtWidgets.QVBoxLayout()
+                layout.addWidget(image_label)
+                layout.addWidget(file_label)
+                self.widget.setLayout(layout)
 
                 self.images.append(file)
 
@@ -453,14 +464,11 @@ class Ui_MainWindow(QMainWindow):
                 if col == 0:
                     self.image_grid_layout.setColumnMinimumWidth(0, 0)
 
-                self.image_grid_layout.addWidget(label, row, col)
+                self.image_grid_layout.addWidget(self.widget, row, col)
 
-            if (len(fname) - 1) % 3 != 0:
-                row += 1
-                for col in range((len(fname) - 1) % 3, 3):
-                    self.image_grid_layout.addWidget(QtWidgets.QLabel(), row, col)
+                # Adjust spacing between widgets
+                self.image_grid_layout.setVerticalSpacing(10)  # Change the value as needed for desired spacing
 
-                self.image_grid_layout.setContentsMargins(0, 2, 0, 2)  
 
     # get the basename (example: /user/hi.png => hi.png)
     def get_basename(self, images):
@@ -489,35 +497,38 @@ class Ui_MainWindow(QMainWindow):
             print(f"Something went wrong! : {e}")
         finally:
             self.loadingDetection.hide()
+
     # reset
     def clear_image(self):
         if len(self.images) != 0:
-            self.images.clear()
             self.prob.clear()
             self.result.clear()
             self.eye3.show()
             self.loadingDetection.hide()
 
             try:
-                self.result_table.setRowCount(0)
-                self.result_table.clearContents()
+                try:
+                    self.result_table.setRowCount(0)
+                    self.result_table.clearContents()
+                    self.result_table.hide()
+                    self.processed_images_label.hide()
+                    self.detected_real_label.hide()
+                    self.detected_gan_label.hide()
+                except:
+                    pass
 
                 # Clear the image labels from the layout
                 for i in reversed(range(self.image_grid_layout.count())):
-                    self.image_grid_layout.itemAt(i).widget().setParent(None)   
+                    self.image_grid_layout.itemAt(i).widget().setParent(None) 
+                    self.images.pop(i)
 
-                self.result_table.hide()
-                self.processed_images_label.hide()
-                self.detected_real_label.hide()
-                self.detected_gan_label.hide()
+                self.uploadButton.show()
+                self.image_container.hide()
+                self.aboutBar_2.show()
+                os.system('cls')
+                messagebox.showinfo(message=f"Images {len(self.images)}")
             except Exception as e:
-                print(f"Something went wrong! : {e}") 
-           
-            self.uploadButton.show()
-            self.image_container.hide()
-            self.aboutBar_2.show()
-            os.system('cls')
-            messagebox.showinfo(message=f"Images {len(self.images)}")     
+                print(f"Something went wrong! : {e}")      
         else:
             messagebox.showinfo(message="Images already cleared")
 
@@ -576,7 +587,11 @@ class Ui_MainWindow(QMainWindow):
             self.processed_images_label.show()
             self.detected_real_label.show()
             self.detected_gan_label.show()
-            messagebox.showinfo(message="No results to display. Please predict results first.") 
+            messagebox.showinfo(message="No results to display. Please predict results first.")
+
+            self.processed_images_label.hide()
+            self.detected_real_label.hide()
+            self.detected_gan_label.hide()
 
 
     # select model
