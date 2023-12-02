@@ -442,8 +442,18 @@ class Ui_MainWindow(QMainWindow):
                 pixmap = QPixmap(file)
                 pixmap = pixmap.scaled(110, 110)
 
-                label = QtWidgets.QLabel()
-                label.setPixmap(pixmap)
+                image_label = QtWidgets.QLabel()
+                image_label.setPixmap(pixmap)
+
+                file_label = QtWidgets.QLabel(os.path.basename(file))
+                file_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+
+                # Create a layout to contain the image and file name label
+                widget = QtWidgets.QWidget()
+                layout = QtWidgets.QVBoxLayout()
+                layout.addWidget(image_label)
+                layout.addWidget(file_label)
+                widget.setLayout(layout)
 
                 self.images.append(file)
 
@@ -453,14 +463,11 @@ class Ui_MainWindow(QMainWindow):
                 if col == 0:
                     self.image_grid_layout.setColumnMinimumWidth(0, 0)
 
-                self.image_grid_layout.addWidget(label, row, col)
+                self.image_grid_layout.addWidget(widget, row, col)
 
-            if (len(fname) - 1) % 3 != 0:
-                row += 1
-                for col in range((len(fname) - 1) % 3, 3):
-                    self.image_grid_layout.addWidget(QtWidgets.QLabel(), row, col)
+                # Adjust spacing between widgets
+                self.image_grid_layout.setVerticalSpacing(10)  # Change the value as needed for desired spacing
 
-                self.image_grid_layout.setContentsMargins(0, 2, 0, 2)  
 
     # get the basename (example: /user/hi.png => hi.png)
     def get_basename(self, images):
