@@ -68,6 +68,7 @@ def spatial_frequency_feature_fusion(images):
 
     for dwt_features, lbp_features in zip(dwt_img_features, lbp_img_features):
         feature_vector = concatenate_lbp_dwt(lbp_features, dwt_features)
+        print("Fused Features\n", feature_vector)
         fused_features.append(feature_vector)
         print(f"\n{len(fused_features)} out of {len(images)} images\nPercentage: {(float(len(fused_features)) / float(len(images)) * 100)}\n")
 
