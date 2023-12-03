@@ -617,7 +617,7 @@ class Ui_MainWindow(QMainWindow):
                 elif "scenes" in self.model_file[0]:
                     self.type ="platt scaler/platt_scale_scenes.model"
                 else:
-                    self.type = "platt_scale_validate_combined.model"
+                    self.type = "platt scaler/platt_scale_combined.model"
                     
                 # load the clf
                 print(self.type)
