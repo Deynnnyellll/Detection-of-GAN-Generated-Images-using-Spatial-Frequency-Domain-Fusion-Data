@@ -13,7 +13,7 @@ from feature_fusion import concatenate_lbp_dwt
 import os
 import matplotlib.pyplot as plt
 import cv2
-
+from numba import jit
 
 def get_data(directory):
     # load preprocessed images
@@ -28,7 +28,6 @@ def get_data(directory):
     print("Preprocessed Images: ", len(preprocessed_img))        
 
     return preprocessed_img
-
 
 
 def spatial_frequency_feature_fusion(images):
@@ -73,7 +72,6 @@ def spatial_frequency_feature_fusion(images):
         print(f"\n{len(fused_features)} out of {len(images)} images\nPercentage: {(float(len(fused_features)) / float(len(images)) * 100)}\n")
 
     return fused_features
-
 
 
 def prepare_data(gan, real):
