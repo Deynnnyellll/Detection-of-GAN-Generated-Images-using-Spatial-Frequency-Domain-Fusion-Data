@@ -639,6 +639,4 @@ if __name__ == "__main__":
     icon = QtGui.QIcon(icon_path)
     MainWindow.setWindowIcon(icon)
     MainWindow.show()
-    sys.exit(app.exec())
-
-  
+    sys.exit(app.exec()) 

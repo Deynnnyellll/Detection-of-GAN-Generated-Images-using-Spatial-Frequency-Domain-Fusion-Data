@@ -14,7 +14,9 @@ def linear_predict_proba(images, loaded_model, clf):
 
     # predict the result
     print("\n\n-------------------THE MODEL IS PREDICTING----------------------------\n")
-    _, _, scores = predict([], feature_vector, loaded_model, '-q')
+    svm_predictions, _, scores = predict([], feature_vector, loaded_model, '-q')
+
+    print(svm_predictions)
 
 
     # get the probability estimates using the predicted svm scores of the svm classifier

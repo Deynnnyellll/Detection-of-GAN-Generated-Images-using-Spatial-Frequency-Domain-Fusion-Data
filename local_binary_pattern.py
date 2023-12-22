@@ -1,10 +1,15 @@
 import numpy as np
+import timeit
+from numba import jit
 
+
+@jit(nopython=True)
 def get_pixel(image, x, y):
     if 0 <= x < len(image) and 0 <= y < len(image[0]):
         return image[x][y]
     return 0
 
+@jit(nopython=True)
 def lbp_calculated_pixel(image, x, y):
     center = image[x][y]
     val_ar = []
@@ -22,6 +27,7 @@ def lbp_calculated_pixel(image, x, y):
         val += val_ar[i] << i
     return val
 
+@jit(nopython=True)
 def lbp(image):
     height, width = len(image), len(image[0])
     lbp_values = np.zeros((height, width), dtype=np.uint8)
