@@ -1,8 +1,8 @@
 # Assign values to TP, TN, FP, FN variables
-TP = 187 
-TN = 294  
-FP = 6 
-FN = 113 
+TP = 187 + 273 + 296 + 300 
+TN = 294 + 275 + 295 + 300  
+FP = 6 + 27 + 5 + 0
+FN = 113 + 25 + 4 + 0
 
 # Calculate Precision
 precision = TP / (TP + FP) if (TP + FP) != 0 else 0
