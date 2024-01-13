@@ -8,6 +8,7 @@ from liblinear_model import linear_predict_proba
 from liblinear.liblinearutil import load_model
 from tkinter import messagebox
 import fitz
+import pandas
 
 
 
@@ -475,6 +476,21 @@ class Ui_MainWindow(QMainWindow):
         images_basename = [os.path.basename(images) for images in self.images]
 
         return images_basename
+    
+
+    def get_true_labels(self, images):
+        filename = os.path.basename(images)
+
+        df = pandas.read_csv('datasets.csv')
+        labels_dict = dict(zip(df['Filename'], df['True Labels']))
+
+        if filename in labels_dict:
+            true_labels = labels_dict[filename]
+
+            if true_labels == 0:
+                return "Real"
+            else:
+                return "GAN"
  
 
     # detect whether an image is gan or real with probability estimates    
@@ -495,6 +511,8 @@ class Ui_MainWindow(QMainWindow):
                 self.display_result() 
         except Exception as e:
             print(f"Something went wrong! : {e}")
+            import traceback
+            traceback.print_exc() 
         finally:
             self.loadingDetection.hide()
 
@@ -534,6 +552,7 @@ class Ui_MainWindow(QMainWindow):
 
     # display the result in table
     def display_result(self):
+        true_labels = [self.get_true_labels(images) for images in self.images]
         
         # Create labels for statistics
         self.processed_images_label = QtWidgets.QLabel(parent=self.centralwidget)
@@ -550,18 +569,20 @@ class Ui_MainWindow(QMainWindow):
         if len(self.result) > 0:
             self.result_table = QTableWidget(self.centralwidget)
             self.result_table.setRowCount(len(self.result))
-            self.result_table.setColumnCount(4)
-            self.result_table.setHorizontalHeaderLabels(["Image Name", "GAN Probability", "Real Probability", "Prediction"])
+            self.result_table.setColumnCount(5)
+            self.result_table.setHorizontalHeaderLabels(["Image Name", "GAN Probability", "Real Probability", "True Labels", "Prediction"])
             self.result_table.setStyleSheet("background-color: transparent")
             self.result_table.setGeometry(560, 115, 363, 320)  # Adjust the size x, y, width, height
             self.result_table.horizontalHeader().setStyleSheet("background-color: transparent")
             self.result_table.verticalHeader().setStyleSheet("background-color: transparent")
 
-            for row, (image_name, prediction, probability) in enumerate(zip(self.get_basename(self.images), self.result, self.prob)):
+            for row, (image_name, prediction, probability, labels) in enumerate(zip(self.get_basename(self.images), self.result, self.prob, true_labels)):
                 self.result_table.setItem(row, 0, QTableWidgetItem(image_name))
                 self.result_table.setItem(row, 1, QTableWidgetItem(f"{(probability[0] * 100):.2f}"))
                 self.result_table.setItem(row, 2, QTableWidgetItem(f"{(probability[1] * 100):.2f}"))
-                self.result_table.setItem(row, 3, QTableWidgetItem(prediction))
+                self.result_table.setItem(row, 3, QTableWidgetItem(labels))
+                self.result_table.setItem(row, 4, QTableWidgetItem(prediction))
+                
 
             self.eye3.hide()
             self.result_table.resizeColumnsToContents()
