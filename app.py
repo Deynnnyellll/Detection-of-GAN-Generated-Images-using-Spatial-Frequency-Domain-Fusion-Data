@@ -479,7 +479,7 @@ class Ui_MainWindow(QMainWindow):
     
 
     def get_true_labels(self, images):
-        filename = os.path.basename(images)
+        filename = os.path.relpath(images)
 
         # read from stylegan datasets            
         df = pandas.read_csv('datasets.csv')
